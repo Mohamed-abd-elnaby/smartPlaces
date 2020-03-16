@@ -12,9 +12,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         button.setOnClickListener {
 
-            SmartPlaces.start(this, supportFragmentManager) {
+            SmartPlaces.start(this, supportFragmentManager, {
                 println(it)
-            }
+            },{
+                finish()
+            })
         }
 
     }

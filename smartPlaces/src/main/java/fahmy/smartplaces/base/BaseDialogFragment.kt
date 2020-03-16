@@ -36,9 +36,8 @@ abstract class BaseDialogFragment() :
             progressBar = CustomProgressPar(requireContext())
             initialComponent()
             initialObserve()
-            clicks()
         } catch (e: InflateException) {
-            /* map is already there, just return view as it is */
+            e.printStackTrace()
         }
 
         return mView
@@ -46,6 +45,7 @@ abstract class BaseDialogFragment() :
 
     override fun onResume() {
         super.onResume()
+        clicks()
 
     }
 

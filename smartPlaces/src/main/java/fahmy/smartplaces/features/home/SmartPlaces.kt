@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.main_screen.*
 
 class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
     lateinit var callback: (Result?) -> Unit
+    lateinit var onFinish: () -> Unit
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var placesViewModel: PlacesViewModel
     private var mapFragment: SupportMapFragment? = null
@@ -95,7 +96,7 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
 
         fun start(
             context: Activity, fragmentManager: FragmentManager,
-            callback: (Result?) -> Unit
+            callback: (Result?) -> Unit,onFinsh:()->Unit
         ) {
             if (instance == null) {
                 MSG("Please initialize Smart places !!")
@@ -103,6 +104,7 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
             instance.takeIf { it != null }?.apply {
 
                 this.callback = callback
+                this.onFinish=onFinsh
                 if (requestPermission(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         context
@@ -127,9 +129,16 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
     }
 
 
+
     override fun onStop() {
         super.onStop()
 
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onFinish()
     }
 
 
@@ -147,13 +156,17 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
 
 
     override fun clicks() {
-        view?.findViewById<Button>(R.id.btn_location)?.setOnClickListener {
+        btn_location?.setOnClickListener {
             callback(myLocation)
             dismiss()
-
         }
     }
 
+
+    override fun onDetach() {
+        super.onDetach()
+        onFinish()
+    }
     override fun getInflateView(): Int {
         return R.layout.main_screen
     }
@@ -199,7 +212,7 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
     override fun onMapReady(p0: GoogleMap?) {
         googleMap = p0
         googleMap?.isMyLocationEnabled = true
-        googleMap?.setMaxZoomPreference(17F)
+        googleMap?.setMaxZoomPreference(15F)
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             location?.apply {
                 googleMap?.moveCamera(
@@ -207,7 +220,7 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
                         LatLng(
                             this.latitude,
                             this.longitude
-                        ), 16F
+                        ), 15F
                     )
                 )
                 myMarker = googleMap?.addMarker(
