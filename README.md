@@ -1,4 +1,4 @@
-# smartGooglePlayPlaces
+# smartPlaces
 Setup google maps places with smart way
 
 
