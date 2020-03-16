@@ -1,5 +1,7 @@
 # smartGooglePlayPlaces
-Frtch google maps places with smart way
+Fetch google maps places with smart way
+
+[![](https://jitpack.io/v/Mohamed-abd-elnaby/smartPlaces.svg)](https://jitpack.io/#Mohamed-abd-elnaby/smartPlaces)
 
 	allprojects {
 		repositories {
@@ -9,5 +11,5 @@ Frtch google maps places with smart way
 	}
 
 	dependencies {
-    	        implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:Tag'
+	        implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:1.0.0'
     	}
