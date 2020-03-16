@@ -82,7 +82,7 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
         lateinit var mContext: Context
         private var instance: SmartPlaces? = null
 
-        fun Initialize(googleApiKey: String, context: Context) {
+        fun initialize(googleApiKey: String, context: Context) {
 
             if (googleApiKey.isNotEmpty()) {
                 mContext = context

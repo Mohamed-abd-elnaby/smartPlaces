@@ -11,6 +11,6 @@ class MainApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        SmartPlaces.Initialize(getString(R.string.apiKey), this)
+        SmartPlaces.initialize(getString(R.string.apiKey), this)
     }
 }
