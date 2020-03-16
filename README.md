@@ -20,12 +20,15 @@ Setup google maps places with smart way
 
         SmartPlaces.initialize(getString(R.string.google_api_key),this)
 
+
  #Start lib with Context and FragmentManger
 
- SmartPlaces.start(this, supportFragmentManager) { result ->
-             result.takeIf { it != null }?.let {
-                 lat = it.geometry.location.lat
-                 lng = it.geometry.location.lng
-             }
-         }
+         SmartPlaces.start(this, supportFragmentManager) { result ->
+                     result.takeIf { it != null }?.let {
+                         lat = it.geometry.location.lat
+                         lng = it.geometry.location.lng
+                     }
+                 }
+
+
 
