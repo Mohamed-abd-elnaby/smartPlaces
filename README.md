@@ -1,7 +1,7 @@
 # smartPlaces
-Setup google maps places with smart way
+google maps places with smart way
 
-
+Setup
 	allprojects {
 		repositories {
 			...
