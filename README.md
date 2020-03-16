@@ -18,7 +18,7 @@ Setup google maps places with smart way
 
  #initialize lib with google map key and Context
 
- SmartPlaces.initialize(getString(R.string.google_api_key),this)
+        SmartPlaces.initialize(getString(R.string.google_api_key),this)
 
  #Start lib with Context and FragmentManger
 
@@ -28,3 +28,4 @@ Setup google maps places with smart way
                  lng = it.geometry.location.lng
              }
          }
+
