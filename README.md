@@ -10,7 +10,7 @@ Setup google maps places with smart way
 	}
 
 	dependencies {
-	        implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:1.0.1'
+	        implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:1.0.2'
     	}
 
 
@@ -23,12 +23,15 @@ Setup google maps places with smart way
 
  #Start lib with Context and FragmentManger
 
-         SmartPlaces.start(this, supportFragmentManager) { result ->
+         SmartPlaces.start(this, supportFragmentManager, { result ->
                      result.takeIf { it != null }?.let {
                          lat = it.geometry.location.lat
                          lng = it.geometry.location.lng
                      }
+                 },{
+                 //onFinish call back
                  }
+                 )
 
 
 
