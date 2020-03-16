@@ -2,6 +2,7 @@
 google maps places with smart way
 
 Setup
+
 	    allprojects {
          		repositories {
          			...
