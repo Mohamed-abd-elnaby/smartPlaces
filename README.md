@@ -2,16 +2,16 @@
 google maps places with smart way
 
 Setup
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+	    allprojects {
+         		repositories {
+         			...
+         			maven { url 'https://jitpack.io' }
+         		}
+         	}
 
-	dependencies {
-	        implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:1.0.2'
-    	}
+        dependencies {
+         	        implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:1.0.2'
+             	}
 
 
  Using
