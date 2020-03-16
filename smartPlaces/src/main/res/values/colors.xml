@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="white">#FFFFFF</color>
+    <color name="whiteShadow">#4DFFFFFF</color>
+    <color name="whiteVeryShadow">#0DFFFFFF</color>
+    <color name="grey_hint">#9a9a9a</color>
+    <color name="grey_hint_shadow">#339a9a9a</color>
+    <color name="black_hint_shadow">#8c000000</color>
+    <color name="green">#008000</color>
+    <color name="editText_color">#8a8a8a</color>
+    <color name="textViewHeaderColor">#424242</color>
+    <color name="textViewHeaderColorSecond">#6b6b6b</color>
+    <color name="tab_normal">#97979b</color>
+    <color name="cardBackGround">#D3D3D3</color>
+    <color name="red">#FF0000</color>
+    <color name="order_price">#e4b337</color>
+    <color name="chart1">#02d8cb</color>
+    <color name="chart2">#8561a2</color>
+    <color name="chart3">#bdc3c7</color>
+    <color name="chart4">#d81b60</color>
+    <color name="black">#000000</color>
+</resources>
