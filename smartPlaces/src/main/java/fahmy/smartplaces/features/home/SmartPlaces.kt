@@ -5,7 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Handler
-import android.widget.Button
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -150,6 +150,10 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         if (mapFragment == null)
             mapFragment = fragmentManager?.findFragmentById(R.id.map) as SupportMapFragment?
+        if (mapFragment == null) {
+            Log.e("Smart Places", "Fragment manger is null. please using supportFragmentManger from activity ")
+            dismiss()
+        }
         mapFragment?.getMapAsync(this)
 //        view?.findViewById<RecyclerView>(Rv).layoutManager = LinearLayoutManager(context)
     }
