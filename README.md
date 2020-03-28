@@ -1,6 +1,8 @@
 # smartPlaces
 google maps places with smart way
+
 #lastversion 1.0.3
+
  #Setup
 
 	    allprojects {
