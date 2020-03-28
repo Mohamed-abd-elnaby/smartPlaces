@@ -96,7 +96,7 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
 
         fun start(
             context: Activity, fragmentManager: FragmentManager,
-            callback: (Result?) -> Unit,onFinsh:()->Unit
+            callback: (Result?) -> Unit, onFinsh: () -> Unit
         ) {
             if (instance == null) {
                 MSG("Please initialize Smart places !!")
@@ -104,7 +104,7 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
             instance.takeIf { it != null }?.apply {
 
                 this.callback = callback
-                this.onFinish=onFinsh
+                this.onFinish = onFinsh
                 if (requestPermission(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         context
@@ -129,7 +129,6 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
     }
 
 
-
     override fun onStop() {
         super.onStop()
 
@@ -148,8 +147,9 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
 
         placesViewModel = ViewModelProvider(this).get(PlacesViewModel::class.java)
 
-        mapFragment =
-            fragmentManager?.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        if (mapFragment == null)
+            mapFragment = fragmentManager?.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 //        view?.findViewById<RecyclerView>(Rv).layoutManager = LinearLayoutManager(context)
     }
@@ -167,6 +167,7 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
         super.onDetach()
         onFinish()
     }
+
     override fun getInflateView(): Int {
         return R.layout.main_screen
     }
