@@ -37,7 +37,7 @@
                  )
 
  # Start lib with (Context and FragmentManger) from fragment
-          SmartPlaces.start(this, activity?.supportFragmentManager, { result ->
+          SmartPlaces.start(this, requireActivity().supportFragmentManager, { result ->
                                result.takeIf { it != null }?.let {
                                    lat = it.geometry.location.lat
                                    lng = it.geometry.location.lng
