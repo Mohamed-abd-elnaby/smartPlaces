@@ -1,6 +1,6 @@
 # smartPlaces
 google maps places with smart way
-
+#lastversion 1.0.3
  #Setup
 
 	    allprojects {
@@ -11,7 +11,7 @@ google maps places with smart way
          	}
 
         dependencies {
-         	        implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:1.0.2'
+         	        implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:{lastversion}'
              	}
 
 
