@@ -1,9 +1,9 @@
-# smartPlaces
-google maps places with smart way
+# #smartPlaces
+# #google maps places with smart way
 
-#lastversion 1.0.3
+# #lastversion 1.0.4
 
- #Setup
+# #Setup
 
 	    allprojects {
          		repositories {
@@ -19,12 +19,12 @@ google maps places with smart way
 
  Using
 
- #initialize lib with google map key and Context
+# #initialize lib with google map key and Context
 
         SmartPlaces.initialize(getString(R.string.google_api_key),this)
 
 
- #Start lib with (Context and FragmentManger) from activity
+# #Start lib with (Context and FragmentManger) from activity
 
          SmartPlaces.start(this, supportFragmentManager, { result ->
                      result.takeIf { it != null }?.let {
