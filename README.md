@@ -1,7 +1,7 @@
 # #smartPlaces
  google maps places with smart way
 
-# lastversion 1.0.4
+# lastversion 1.0.5
 
 # Setup
 

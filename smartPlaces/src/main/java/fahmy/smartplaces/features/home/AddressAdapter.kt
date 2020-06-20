@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.smartplaces_address_item.view.*
 // Created by fahmy on 3/11/20.
 //
 
-class AddressAdapter(var results: List<Result>, var callBack: (Result) -> Unit) :
+class AddressAdapter(var callBack: (Result) -> Unit) :
     RecyclerView.Adapter<AddressAdapter.ViewHolder>() {
 
     class ViewHolder(var view: View, var callBack: (Result) -> Unit) :
@@ -28,6 +28,7 @@ class AddressAdapter(var results: List<Result>, var callBack: (Result) -> Unit) 
 
     }
 
+    var results: MutableList<Result> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val item =

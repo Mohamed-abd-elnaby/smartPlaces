@@ -4,7 +4,6 @@ package fahmy.smartplaces.base
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import fahmy.smartplaces.base.helper.isInternetConnected
-import fahmy.smartplaces.features.home.SmartPlaces
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +18,7 @@ abstract class MainRepository() : ViewModel() {
 
     fun fetchData(states: Any, showProgress: Boolean, worker: suspend (() -> Unit)) =
         CoroutineScope(Dispatchers.Main).launch {
-            if (isInternetConnected(SmartPlaces.mContext)) {
+            if (isInternetConnected()) {
                 if (showProgress)
                     (states as MutableLiveData<*>).value = CommonStates.LoadingShow
                 worker()
@@ -31,7 +30,7 @@ abstract class MainRepository() : ViewModel() {
 
     fun fetchData(worker: suspend (() -> Unit)) =
         CoroutineScope(Dispatchers.Main).launch {
-            if (isInternetConnected(SmartPlaces.mContext)) {
+            if (isInternetConnected()) {
                 worker()
             }
         }

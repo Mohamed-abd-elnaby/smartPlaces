@@ -45,6 +45,18 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
     private var myLocation: Result? = null
     private var googleApiKey = ""
     var handler = Handler()
+    val adapter = AddressAdapter {
+        val latlng = LatLng(it.geometry.location.lat, it.geometry.location.lng)
+        myLocation = it
+        myMarker?.position =
+            latlng
+        googleMap?.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                latlng,
+                googleMap?.maxZoomLevel ?: 17F
+            )
+        )
+    }
 
     private fun requestPermission(permission: String, context: Activity): Boolean {
         return if (CheckPermission(permission, context)) {
@@ -142,6 +154,8 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
 
 
     override fun initialComponent() {
+        adapter.results.clear()
+        adapter.notifyDataSetChanged()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
@@ -160,6 +174,7 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
 
 
     override fun clicks() {
+        rv_address.adapter = adapter
         btn_location?.setOnClickListener {
             callback(myLocation)
             dismiss()
@@ -192,19 +207,8 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
             is PlacesStates.PlacesResponseSuccess -> {
                 result.data?.results.takeIf { !it.isNullOrEmpty() }?.let { list ->
                     myLocation = list[0]
-                    val adapter = AddressAdapter(list) {
-                        val latlng = LatLng(it.geometry.location.lat, it.geometry.location.lng)
-                        myLocation = it
-                        myMarker?.position =
-                            latlng
-                        googleMap?.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                latlng,
-                                googleMap?.maxZoomLevel ?: 17F
-                            )
-                        )
-                    }
-                    rv_address.adapter = adapter
+                    adapter.results = list.toMutableList()
+                    adapter.notifyDataSetChanged()
                 }
                 println("Result is ${result.data}")
             }
@@ -241,6 +245,14 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
 
 
         }
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
         fusedLocationClient.lastLocation.addOnFailureListener {
             dismiss()
         }
@@ -248,6 +260,8 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
             if (myMarker != null)
                 myMarker?.position = LatLng
             LatLng?.apply {
+                adapter.results.clear()
+                adapter.notifyDataSetChanged()
                 placesViewModel.getPlaces(googleApiKey, this.latitude.toString(), this.longitude.toString())
             }
         }

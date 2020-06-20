@@ -3,30 +3,21 @@ package fahmy.smartplaces.base.helper
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
-import android.util.Log
-import android.widget.Toast
+import android.net.NetworkCapabilities
+import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse
-import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import fahmy.smartplaces.R
 import fahmy.smartplaces.base.MainRepository
 import fahmy.smartplaces.enitities.GeneralResponse
 import fahmy.smartplaces.features.home.SmartPlaces
 import fahmy.smartplaces.repository.RepositoryClient
-import okhttp3.Interceptor
 import okhttp3.ResponseBody
 
 
@@ -64,48 +55,48 @@ fun Dialog.handleApiError(code: Int, e: ResponseBody?) {
     }
 
 }
-
-fun Fragment.getAddress(
-    showLoading: () -> Unit,
-    hideLoading: () -> Unit,
-    callBack: (Place) -> Unit
-
-) {
-    showLoading()
-    val placesClient: PlacesClient = Places.createClient(requireContext())
-
-    val placeFields = mutableListOf(Place.Field.ADDRESS, Place.Field.LAT_LNG)
-    val request = FindCurrentPlaceRequest.newInstance(placeFields)
-    if (ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    ) {
-        val placeResponse: Task<FindCurrentPlaceResponse?> =
-            placesClient.findCurrentPlace(request)
-        placeResponse.addOnCompleteListener { task: Task<FindCurrentPlaceResponse?> ->
-            hideLoading()
-            if (task.isSuccessful) {
-                task.result.takeIf { it != null }?.let { currentPlace ->
-                    currentPlace.takeIf { it.placeLikelihoods.size > 0 }?.let {
-                        val place = it.placeLikelihoods[0].place
-                        callBack(place)
-                        Toast.makeText(requireContext(), place.address, Toast.LENGTH_LONG)
-                            .show()
-
-                    }
-
-                }
-
-            } else {
-                val exception = task.exception
-                if (exception is ApiException) {
-                    Log.e("Places", "Place not found: " + exception.message)
-                }
-            }
-        }
-    }
-}
+//
+//fun Fragment.getAddress(
+//    showLoading: () -> Unit,
+//    hideLoading: () -> Unit,
+//    callBack: (Place) -> Unit
+//
+//) {
+//    showLoading()
+//    val placesClient: PlacesClient = Places.createClient(requireContext())
+//
+//    val placeFields = mutableListOf(Place.Field.ADDRESS, Place.Field.LAT_LNG)
+//    val request = FindCurrentPlaceRequest.newInstance(placeFields)
+//    if (ContextCompat.checkSelfPermission(
+//            requireContext(),
+//            Manifest.permission.ACCESS_FINE_LOCATION
+//        ) == PackageManager.PERMISSION_GRANTED
+//    ) {
+//        val placeResponse: Task<FindCurrentPlaceResponse?> =
+//            placesClient.findCurrentPlace(request)
+//        placeResponse.addOnCompleteListener { task: Task<FindCurrentPlaceResponse?> ->
+//            hideLoading()
+//            if (task.isSuccessful) {
+//                task.result.takeIf { it != null }?.let { currentPlace ->
+//                    currentPlace.takeIf { it.placeLikelihoods.size > 0 }?.let {
+//                        val place = it.placeLikelihoods[0].place
+//                        callBack(place)
+//                        Toast.makeText(requireContext(), place.address, Toast.LENGTH_LONG)
+//                            .show()
+//
+//                    }
+//
+//                }
+//
+//            } else {
+//                val exception = task.exception
+//                if (exception is ApiException) {
+//                    Log.e("Places", "Place not found: " + exception.message)
+//                }
+//            }
+//        }
+//    }
+//}
 
 
 fun handelApiError(response: ResponseBody?, action: (String) -> Unit) {
@@ -119,7 +110,6 @@ fun handelApiError(response: ResponseBody?, action: (String) -> Unit) {
         action("")
     }
 }
-
 
 
 fun MainRepository.getApiClient(): RepositoryClient {
@@ -147,27 +137,58 @@ fun Activity.handleApiError(code: Int, e: ResponseBody?) {
 
 }
 
+fun isInternetAvailable(context: Context): Boolean {
+    var result = false
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val networkCapabilities = connectivityManager.activeNetwork ?: return false
+        val actNw =
+            connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+        result = when {
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
+        }
+    } else {
+        connectivityManager.run {
+            connectivityManager.activeNetworkInfo?.run {
+                result = when (type) {
+                    ConnectivityManager.TYPE_WIFI -> true
+                    ConnectivityManager.TYPE_MOBILE -> true
+                    ConnectivityManager.TYPE_ETHERNET -> true
+                    else -> false
+                }
 
-fun Activity.isInternetConnected(): Boolean {
-    val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE)
-    return if (connectivityManager is ConnectivityManager) {
-        val networkInfo: NetworkInfo? = connectivityManager.activeNetworkInfo
-        networkInfo?.isConnected ?: false
-    } else false
+            }
+        }
+    }
+
+    return result
 }
 
+inline fun Fragment.isInternetConnected(ifConnected: () -> Unit, ifNotConnected: () -> Unit) {
 
-fun MainRepository.isInternetConnected(context: Context): Boolean {
-
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE)
-    return if (connectivityManager is ConnectivityManager) {
-        val networkInfo: NetworkInfo? = connectivityManager.activeNetworkInfo
-        networkInfo?.isConnected ?: false
-    } else false
+    if (isInternetAvailable(requireContext()))
+        ifConnected()
+    else
+        ifNotConnected()
 }
 
-fun Fragment.isInternetConnected(): Boolean {
-    return activity?.isInternetConnected() ?: false
+inline fun Activity.isInternetConnected(ifConnected: () -> Unit, ifNotConnected: () -> Unit) {
+    if (isInternetAvailable(this))
+        ifConnected()
+    else
+        ifNotConnected()
+}
+
+fun BroadcastReceiver.isInternetConnected(): Boolean {
+    return isInternetAvailable(SmartPlaces.mContext)
+}
+
+fun MainRepository.isInternetConnected(): Boolean {
+    return isInternetAvailable(SmartPlaces.mContext)
 }
 
 fun Fragment.showInternetMessageError() {
