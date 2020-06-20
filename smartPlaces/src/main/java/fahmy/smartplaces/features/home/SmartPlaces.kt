@@ -2,14 +2,11 @@ package fahmy.smartplaces.features.home
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Handler
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -22,7 +19,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import fahmy.smartplaces.R
-import fahmy.smartplaces.base.BaseDialogFragment
+import fahmy.smartplaces.base.BaseActivity
 import fahmy.smartplaces.base.PlacesStates
 import fahmy.smartplaces.base.helper.Utility
 import fahmy.smartplaces.enitities.Result
@@ -34,18 +31,15 @@ import kotlinx.android.synthetic.main.main_screen.*
 // Created by Fahmy on 2/17/20.
 //
 
-class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
-    lateinit var callback: (Result?) -> Unit
-    lateinit var onFinish: () -> Unit
+class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var placesViewModel: PlacesViewModel
     private var mapFragment: SupportMapFragment? = null
     private var myMarker: Marker? = null
     private var googleMap: GoogleMap? = null
     private var myLocation: Result? = null
-    private var googleApiKey = ""
     var handler = Handler()
-    val adapter = AddressAdapter {
+    private val adapter = AddressAdapter {
         val latlng = LatLng(it.geometry.location.lat, it.geometry.location.lng)
         myLocation = it
         myMarker?.position =
@@ -58,11 +52,11 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
         )
     }
 
-    private fun requestPermission(permission: String, context: Activity): Boolean {
-        return if (CheckPermission(permission, context)) {
+    private fun requestPermission(permission: String): Boolean {
+        return if (CheckPermission(permission, this)) {
             true
         } else {
-            RequestPermission(permission, context)
+            RequestPermission(permission, this)
             false
         }
     }
@@ -91,101 +85,36 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
 
     }
 
-    companion object {
-        lateinit var mContext: Context
-        private var instance: SmartPlaces? = null
-
-        fun initialize(googleApiKey: String, context: Context) {
-
-            if (googleApiKey.isNotEmpty()) {
-                mContext = context
-                instance = SmartPlaces()
-                instance?.googleApiKey = googleApiKey
-            } else {
-                MSG("Api key is empty.")
-            }
-        }
-
-        fun start(
-            context: Activity, fragmentManager: FragmentManager,
-            callback: (Result?) -> Unit, onFinsh: () -> Unit
-        ) {
-            if (instance == null) {
-                MSG("Please initialize Smart places !!")
-            }
-            instance.takeIf { it != null }?.apply {
-
-                this.callback = callback
-                this.onFinish = onFinsh
-                if (requestPermission(
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        context
-                    ) || requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, context)
-                ) {
-                    instance?.showNow(fragmentManager, "")
-
-                }
-            }
-
-
-        }
-
-        private fun MSG(msg: String) {
-            Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show()
-
-        }
-
-        private fun MSG(MSG: String, time: Int) {
-            Toast.makeText(mContext, MSG, time).show()
-        }
-    }
-
-
     override fun onStop() {
         super.onStop()
 
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        onFinish()
-    }
 
 
     override fun initialComponent() {
+        if (!requestPermission(Manifest.permission.ACCESS_FINE_LOCATION) || !requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            Log.e("Smart Places", "need location permission")
+            finish()
+        }
         adapter.results.clear()
         adapter.notifyDataSetChanged()
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         placesViewModel = ViewModelProvider(this).get(PlacesViewModel::class.java)
-
-        mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        if (mapFragment == null)
-            mapFragment = fragmentManager?.findFragmentById(R.id.map) as SupportMapFragment?
-        if (mapFragment == null) {
-            Log.e("Smart Places", "Fragment manger is null. please using supportFragmentManger from activity ")
-            dismiss()
-        }
+        mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-//        view?.findViewById<RecyclerView>(Rv).layoutManager = LinearLayoutManager(context)
     }
 
 
     override fun clicks() {
         rv_address.adapter = adapter
         btn_location?.setOnClickListener {
-            callback(myLocation)
-            dismiss()
+            SmartPlacesInitialize.INSTANCE.callback(myLocation)
+            finish()
         }
     }
 
-
-    override fun onDetach() {
-        super.onDetach()
-        onFinish()
-    }
 
     override fun getInflateView(): Int {
         return R.layout.main_screen
@@ -240,33 +169,28 @@ class SmartPlaces() : BaseDialogFragment(), OnMapReadyCallback {
                         )
                     )
                 )
-                placesViewModel.getPlaces(googleApiKey, this.latitude.toString(), this.longitude.toString())
+                placesViewModel.getPlaces(SmartPlacesInitialize.INSTANCE.apiKey, this.latitude.toString(), this.longitude.toString())
             }
 
 
         }
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
-            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
+
         fusedLocationClient.lastLocation.addOnFailureListener {
-            dismiss()
+
+            finish()
         }
+
         googleMap?.setOnMapLongClickListener { LatLng ->
             if (myMarker != null)
                 myMarker?.position = LatLng
             LatLng?.apply {
                 adapter.results.clear()
                 adapter.notifyDataSetChanged()
-                placesViewModel.getPlaces(googleApiKey, this.latitude.toString(), this.longitude.toString())
+                placesViewModel.getPlaces(SmartPlacesInitialize.INSTANCE.apiKey, this.latitude.toString(), this.longitude.toString())
             }
         }
         googleMap?.setOnMarkerClickListener {
-            dismiss()
+            finish()
             true
         }
     }

@@ -16,7 +16,7 @@ import com.google.gson.Gson
 import fahmy.smartplaces.R
 import fahmy.smartplaces.base.MainRepository
 import fahmy.smartplaces.enitities.GeneralResponse
-import fahmy.smartplaces.features.home.SmartPlaces
+import fahmy.smartplaces.features.home.SmartPlacesInitialize
 import fahmy.smartplaces.repository.RepositoryClient
 import okhttp3.ResponseBody
 
@@ -184,11 +184,11 @@ inline fun Activity.isInternetConnected(ifConnected: () -> Unit, ifNotConnected:
 }
 
 fun BroadcastReceiver.isInternetConnected(): Boolean {
-    return isInternetAvailable(SmartPlaces.mContext)
+    return isInternetAvailable(SmartPlacesInitialize.INSTANCE.context)
 }
 
 fun MainRepository.isInternetConnected(): Boolean {
-    return isInternetAvailable(SmartPlaces.mContext)
+    return isInternetAvailable(SmartPlacesInitialize.INSTANCE.context)
 }
 
 fun Fragment.showInternetMessageError() {

@@ -2,7 +2,7 @@ package Fahmy.placesproject
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import fahmy.smartplaces.features.home.SmartPlaces
+import fahmy.smartplaces.features.home.SmartPlacesInitialize
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -12,11 +12,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         button.setOnClickListener {
 
-            SmartPlaces.start(this, supportFragmentManager, {
-                println(it)
-            },{
-                finish()
-            })
+            SmartPlacesInitialize.INSTANCE.startSmartPlaces(this) {
+                println("result from $it")
+            }
         }
 
     }

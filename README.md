@@ -1,7 +1,7 @@
 # #smartPlaces
  google maps places with smart way
 
-# lastversion 1.0.5
+# lastversion 1.0.6
 
 # Setup
 
@@ -21,29 +21,11 @@
 
  # initialize lib with google map key and Context
 
-        SmartPlaces.initialize(getString(R.string.google_api_key),this)
+          SmartPlacesInitialize.INSTANCE.apiKey = getString(R.string.apiKey)
 
 
- # Start lib with (Context and FragmentManger) from activity
+ # Start lib 
 
-         SmartPlaces.start(this, supportFragmentManager, { result ->
-                     result.takeIf { it != null }?.let {
-                         lat = it.geometry.location.lat
-                         lng = it.geometry.location.lng
-                     }
-                 },{
-                 //onFinish call back
-                 }
-                 )
-
- # Start lib with (Context and FragmentManger) from fragment
-          SmartPlaces.start(this, requireActivity().supportFragmentManager, { result ->
-                               result.takeIf { it != null }?.let {
-                                   lat = it.geometry.location.lat
-                                   lng = it.geometry.location.lng
-                               }
-                           },{
-                           //onFinish call back
-                           }
-                           )
-
+          SmartPlacesInitialize.INSTANCE.startSmartPlaces(this) {
+                        //using result here
+                    }

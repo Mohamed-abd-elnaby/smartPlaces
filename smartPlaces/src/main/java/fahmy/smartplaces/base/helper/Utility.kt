@@ -21,8 +21,6 @@ object Utility {
     lateinit var alertDialog: AlertDialog
 
 
-
-
     fun errorDialog(context: Context, msg: String) {
         val params =
             LinearLayout.LayoutParams(

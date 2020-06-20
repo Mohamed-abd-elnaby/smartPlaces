@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import fahmy.smartplaces.features.home.SmartPlaces
+import fahmy.smartplaces.features.home.SmartPlacesInitialize
 import kotlinx.android.synthetic.main.activity_main.*
 
 class PlaceFragment : Fragment() {
@@ -19,19 +19,9 @@ class PlaceFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         button.setOnClickListener {
-            SmartPlaces.start(
-                requireActivity(),
-                requireActivity().supportFragmentManager,
-                { result ->
-                    result.takeIf { it != null }?.let {
-                        println("result: $it")
-
-                    }
-                },
-                {
-                    //onFinish call back
-                }
-            )
+            SmartPlacesInitialize.INSTANCE.startSmartPlaces(requireContext()) {
+                println(it)
+            }
 
         }
     }

@@ -1,47 +1,27 @@
 package fahmy.smartplaces.base
 
-import android.app.Dialog
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.DialogFragment
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import fahmy.smartplaces.base.helper.handleApiError
 import fahmy.smartplaces.base.helper.showInternetMessageError
 
 
-abstract class BaseDialogFragment() :
-    DialogFragment() {
+abstract class BaseActivity() :
+    AppCompatActivity() {
     private var mView: View? = null
 
     private lateinit var progressBar: CustomProgressPar
 
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState)
-
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_TITLE, android.R.style.Theme_Holo_Light);
+        progressBar = CustomProgressPar(this)
+        setContentView(getInflateView())
+        initialComponent()
+        initialObserve()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if (mView != null) {
-            val parent = mView?.parent as ViewGroup
-            parent.removeView(mView)
-        }
-        try {
-            mView = inflater.inflate(getInflateView(), container, true)
-            progressBar = CustomProgressPar(requireContext())
-            initialComponent()
-            initialObserve()
-        } catch (e: InflateException) {
-            e.printStackTrace()
-        }
-
-        return mView
-    }
 
     override fun onResume() {
         super.onResume()

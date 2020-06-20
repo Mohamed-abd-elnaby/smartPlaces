@@ -32,7 +32,7 @@ class AddressAdapter(var callBack: (Result) -> Unit) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val item =
-            LayoutInflater.from(SmartPlaces.mContext)
+            LayoutInflater.from(SmartPlacesInitialize.INSTANCE.context)
                 .inflate(R.layout.smartplaces_address_item, parent, false)
 
         return ViewHolder(item) {
