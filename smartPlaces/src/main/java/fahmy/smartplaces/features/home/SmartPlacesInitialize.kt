@@ -6,7 +6,7 @@ import fahmy.smartplaces.enitities.Result
 
 class SmartPlacesInitialize {
     lateinit var apiKey: String
-    lateinit var callback: (Result?) -> Unit
+    var callback: ((Result?) -> Unit)? = null
     lateinit var context: Context
 
     fun startSmartPlaces(context: Context, callback: (Result?) -> Unit) {
