@@ -20,7 +20,7 @@ class PlaceFragment : Fragment() {
         super.onResume()
         button.setOnClickListener {
             SmartPlacesInitialize.INSTANCE.startSmartPlaces(requireContext()) {
-                println(it)
+                println("result from $it")
             }
 
         }

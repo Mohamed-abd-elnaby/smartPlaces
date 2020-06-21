@@ -3,7 +3,6 @@ package fahmy.smartplaces.features.home
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.os.Handler
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -38,7 +37,6 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     private var myMarker: Marker? = null
     private var googleMap: GoogleMap? = null
     private var myLocation: Result? = null
-    var handler = Handler()
     private val adapter = AddressAdapter {
         val latlng = LatLng(it.geometry.location.lat, it.geometry.location.lng)
         myLocation = it
@@ -92,7 +90,6 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     }
 
 
-
     override fun initialComponent() {
         if (!requestPermission(Manifest.permission.ACCESS_FINE_LOCATION) || !requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
             Log.e("Smart Places", "need location permission")
@@ -110,7 +107,9 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     override fun clicks() {
         rv_address.adapter = adapter
         btn_location?.setOnClickListener {
-            SmartPlacesInitialize.INSTANCE.callback(myLocation)
+            SmartPlacesInitialize.INSTANCE.callback?.let {
+                it(myLocation)
+            }
             finish()
         }
     }
@@ -189,10 +188,7 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
                 placesViewModel.getPlaces(SmartPlacesInitialize.INSTANCE.apiKey, this.latitude.toString(), this.longitude.toString())
             }
         }
-        googleMap?.setOnMarkerClickListener {
-            finish()
-            true
-        }
+
     }
 
 }
