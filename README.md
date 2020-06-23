@@ -1,7 +1,7 @@
 # #smartPlaces
  google maps places with smart way
 
-# lastversion 1.0.6
+# lastversion 1.0.7
 
 # Setup
 
@@ -22,10 +22,10 @@
  # initialize lib with google map key and Context
 
           SmartPlacesInitialize.INSTANCE.apiKey = getString(R.string.apiKey)
+          SmartPlacesInitialize.INSTANCE.context = context
 
 
  # Start lib 
-
           SmartPlacesInitialize.INSTANCE.startSmartPlaces(this) {
                         //using result here
                     }

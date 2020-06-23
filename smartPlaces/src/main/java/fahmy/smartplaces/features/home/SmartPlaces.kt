@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -77,10 +78,26 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
             ActivityCompat.requestPermissions(
                 activity,
                 arrayOf(permission),
-                Utility.PermissionCode
+                Utility.PermissionCodeLocation
             )
 
 
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == Utility.PermissionCodeLocation && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (requestPermission(Manifest.permission.ACCESS_FINE_LOCATION) && requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                mapFragment?.getMapAsync(this)
+
+
+            } else {
+                Log.e("Smart Places", "need location permission")
+            }
+        else {
+            Toast.makeText(this, "Permission Must be provided", Toast.LENGTH_LONG).show()
+            finish()
+        }
     }
 
     override fun onStop() {
@@ -91,16 +108,20 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
 
     override fun initialComponent() {
-        if (!requestPermission(Manifest.permission.ACCESS_FINE_LOCATION) || !requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            Log.e("Smart Places", "need location permission")
-            finish()
-        }
+
         adapter.results.clear()
         adapter.notifyDataSetChanged()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         placesViewModel = ViewModelProvider(this).get(PlacesViewModel::class.java)
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(this)
+        if (requestPermission(Manifest.permission.ACCESS_FINE_LOCATION) && requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            mapFragment?.getMapAsync(this)
+
+
+        } else {
+            Log.e("Smart Places", "need location permission")
+        }
+
     }
 
 

@@ -13,5 +13,6 @@ class MainApp : Application() {
         super.onCreate()
 //        SmartPlaces.initialize(getString(R.string.apiKey), this)
         SmartPlacesInitialize.INSTANCE.apiKey = getString(R.string.apiKey)
+        SmartPlacesInitialize.INSTANCE.context = this.applicationContext
     }
 }
