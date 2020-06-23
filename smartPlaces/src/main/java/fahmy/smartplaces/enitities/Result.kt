@@ -1,5 +1,8 @@
 package fahmy.smartplaces.enitities
 
+import androidx.annotation.Keep
+
+@Keep
 data class Result(
     val geometry: Geometry,
     val icon: String,

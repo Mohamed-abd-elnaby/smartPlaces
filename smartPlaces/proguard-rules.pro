@@ -27,4 +27,3 @@
   *;
 }
 -keepattributes Exceptions, Signature, InnerClasses
--keep class fahmy.smartplaces.** { *; }

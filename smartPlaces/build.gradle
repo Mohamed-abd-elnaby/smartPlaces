@@ -6,6 +6,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.Mohamed-abd-elnaby'
 android {
+
     compileSdkVersion 30
 
 
@@ -13,14 +14,14 @@ android {
         minSdkVersion 22
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
+        proguardFiles 'proguard-rules.pro'
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
