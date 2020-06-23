@@ -1,9 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'com.github.dcendents.android-maven'
-
 group='com.github.Mohamed-abd-elnaby'
 android {
 //    signingConfigs {
@@ -20,7 +18,6 @@ android {
         minSdkVersion 22
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        signingConfig signingConfigs.debug
     }
@@ -28,7 +25,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+          //  proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
