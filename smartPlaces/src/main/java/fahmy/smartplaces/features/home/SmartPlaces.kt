@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.Keep
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -31,6 +32,7 @@ import kotlinx.android.synthetic.main.main_screen.*
 // Created by Fahmy on 2/17/20.
 //
 
+@Keep
 class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var placesViewModel: PlacesViewModel
@@ -128,8 +130,10 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     override fun clicks() {
         rv_address.adapter = adapter
         btn_location?.setOnClickListener {
-            SmartPlacesInitialize.INSTANCE.callback?.let {
-                it(myLocation)
+            if (SmartPlacesInitialize.INSTANCE.callback != null) {
+                SmartPlacesInitialize.INSTANCE.callback!!(myLocation)
+            } else {
+                Log.e("Smart Places ", "Call back is null")
             }
             finish()
         }

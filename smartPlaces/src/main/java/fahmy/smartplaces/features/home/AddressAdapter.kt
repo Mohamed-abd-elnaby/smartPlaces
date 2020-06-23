@@ -3,6 +3,7 @@ package fahmy.smartplaces.features.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.Keep
 import androidx.recyclerview.widget.RecyclerView
 import fahmy.smartplaces.R
 import fahmy.smartplaces.enitities.Result
@@ -12,6 +13,7 @@ import kotlinx.android.synthetic.main.smartplaces_address_item.view.*
 // Created by fahmy on 3/11/20.
 //
 
+@Keep
 class AddressAdapter(var callBack: (Result) -> Unit) :
     RecyclerView.Adapter<AddressAdapter.ViewHolder>() {
 
