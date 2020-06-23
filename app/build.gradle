@@ -6,14 +6,14 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.Mohamed-abd-elnaby'
 android {
-    signingConfigs {
-        debug {
-            storeFile file('D:\\Projects\\keys\\places.jks')
-            storePassword 'Nada@1997'
-            keyAlias 'places'
-            keyPassword 'Nada@1997'
-        }
-    }
+//    signingConfigs {
+//        debug {
+//            storeFile file('D:\\Projects\\keys\\places.jks')
+//            storePassword 'Nada@1997'
+//            keyAlias 'places'
+//            keyPassword 'Nada@1997'
+//        }
+//    }
     compileSdkVersion 30
     defaultConfig {
         applicationId "Fahmy.placesproject"
@@ -22,7 +22,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.debug
+//        signingConfig signingConfigs.debug
     }
 
     buildTypes {
