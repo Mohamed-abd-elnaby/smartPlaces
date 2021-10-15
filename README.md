@@ -31,6 +31,6 @@
 
  Start lib
           
-	  SmartPlacesInitialize.INSTANCE.startSmartPlaces(this) {
+	  SmartPlacesInitialize.INSTANCE.startSmartPlaces(Require Context) {
                         //using result here
                     }
