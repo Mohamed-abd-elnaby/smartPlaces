@@ -14,16 +14,19 @@
 
         dependencies {
          	        implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:{lastversion}'
+			implementation 'com.android.volley:volley:{lastversion}'
              	}
+		
+	Google Maps Key define Strings.xml with name "google_maps_key"
+	
 
 
  Using
 
-  initialize lib with google map key and Context
+  initialize lib with google map key and Context in Application Class
 
           SmartPlacesInitialize.INSTANCE.apiKey = getString(R.string.apiKey)
           SmartPlacesInitialize.INSTANCE.context = context
-
 
   Start lib
           SmartPlacesInitialize.INSTANCE.startSmartPlaces(this) {
