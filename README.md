@@ -27,8 +27,9 @@
 
           SmartPlacesInitialize.INSTANCE.apiKey = getString(R.string.google_maps_key)
           SmartPlacesInitialize.INSTANCE.context = context
+	  
 
-  Start lib
+ Start lib
           SmartPlacesInitialize.INSTANCE.startSmartPlaces(this) {
                         //using result here
                     }
