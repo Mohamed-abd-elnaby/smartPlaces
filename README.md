@@ -30,6 +30,7 @@
 	  
 
  Start lib
-          SmartPlacesInitialize.INSTANCE.startSmartPlaces(this) {
+          
+	  SmartPlacesInitialize.INSTANCE.startSmartPlaces(this) {
                         //using result here
                     }
