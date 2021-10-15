@@ -25,7 +25,7 @@
 
   initialize lib with google map key and Context in Application Class
 
-          SmartPlacesInitialize.INSTANCE.apiKey = getString(R.string.apiKey)
+          SmartPlacesInitialize.INSTANCE.apiKey = getString(R.string.google_maps_key)
           SmartPlacesInitialize.INSTANCE.context = context
 
   Start lib
