@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:elevation="3dp"
+    app:cardBackgroundColor="@color/recycleViewAdapterItemBackgroundColor"
     app:cardCornerRadius="6dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:textColor="@color/black"
+            android:textColor="@color/recycleViewAdapterItemTextViewColor"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

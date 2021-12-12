@@ -1,18 +1,18 @@
 package Fahmy.placesproject
 
+import Fahmy.placesproject.databinding.ActivityMainBinding
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import fahmy.smartplaces.features.home.SmartPlacesInitialize
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var bind: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        button.setOnClickListener {
-
-            SmartPlacesInitialize.INSTANCE.startSmartPlaces(this) {
+        bind = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(bind.root)
+        bind.button.setOnClickListener {
+            SmartPlacesInitialize.startSmartPlaces(this) {
                 println("result from $it")
             }
         }

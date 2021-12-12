@@ -1,10 +1,10 @@
 package fahmy.smartplaces.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import fahmy.smartplaces.base.CommonStates
 import fahmy.smartplaces.base.MainRepository
 import fahmy.smartplaces.base.PlacesStates
+import fahmy.smartplaces.base.SingleLiveEvent
 import fahmy.smartplaces.repository.RepositoryClient
 
 //
@@ -14,7 +14,7 @@ import fahmy.smartplaces.repository.RepositoryClient
 class PlacesViewModel() : MainRepository() {
 
 
-    private var states = MutableLiveData<CommonStates<PlacesStates>>()
+    private var states = SingleLiveEvent<CommonStates<PlacesStates>>()
     var _states: LiveData<CommonStates<PlacesStates>> = states
     fun getPlaces(apiKey: String, loc_lat: String, loc_long: String) {
         fetchData(states, true) {

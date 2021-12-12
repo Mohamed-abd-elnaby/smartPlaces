@@ -1,83 +1,79 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-
-apply plugin: 'com.github.dcendents.android-maven'
-
-group='com.github.Mohamed-abd-elnaby'
+plugins {
+    id("kotlin-android")
+    id("kotlin-kapt")
+    id 'com.android.library'
+}
+group = 'com.github.Mohamed-abd-elnaby'
 android {
-
-    compileSdkVersion 30
-
+    compileSdkVersion 31
     defaultConfig {
         minSdkVersion 22
-        versionCode 1
-        versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
-          //  proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
-
+    compileOptions {
+        sourceCompatibility = 11
+        targetCompatibility = 11
+    }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.0"
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.core:core-ktx:1.3.1'
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0"
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'androidx.core:core-ktx:1.7.0'
     //lottie
-    implementation 'com.airbnb.android:lottie:3.4.2'
+    implementation 'com.airbnb.android:lottie:4.2.2'
 
     //component
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
 
 
     //Network
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.1'
-    implementation 'com.squareup.okhttp3:okhttp:4.8.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.3'
 
     //implement JavaRx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
 
     // RXJava adapter
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
 
     //places
-    implementation 'com.google.android.libraries.places:places:2.3.0'
+    implementation 'com.google.android.libraries.places:places:2.5.0'
 
     //Live Data
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.4.0'
 
 
     //google Map
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.4'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2'
 
 
 }

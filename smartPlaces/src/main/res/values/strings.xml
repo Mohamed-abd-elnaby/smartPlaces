@@ -1,10 +1,7 @@
 <resources>
-    <string name="google_maps_key">AIzaSyCbVoNTXcSVwMd4dAROv6tsBO3xqyMD3VA</string>
-    <string name="app_name">SmartPLaces</string>
     <string name="error">Error</string>
     <string name="generic_error">Some Error Happen</string>
     <string name="ok">OK</string>
     <string name="info">Info</string>
     <string name="noInternet">No internet connected.</string>
-    <string name="current_location">Current Location</string>
 </resources>

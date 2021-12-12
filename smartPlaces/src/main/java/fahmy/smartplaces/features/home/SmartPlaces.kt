@@ -1,14 +1,16 @@
 package fahmy.smartplaces.features.home
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.Keep
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -23,9 +25,9 @@ import fahmy.smartplaces.R
 import fahmy.smartplaces.base.BaseActivity
 import fahmy.smartplaces.base.PlacesStates
 import fahmy.smartplaces.base.helper.Utility
+import fahmy.smartplaces.databinding.MainScreenBinding
 import fahmy.smartplaces.enitities.Result
 import fahmy.smartplaces.viewmodel.PlacesViewModel
-import kotlinx.android.synthetic.main.main_screen.*
 
 
 //
@@ -40,36 +42,37 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     private var myMarker: Marker? = null
     private var googleMap: GoogleMap? = null
     private var myLocation: Result? = null
+    private lateinit var bind: MainScreenBinding
     private val adapter = AddressAdapter {
-        val latlng = LatLng(it.geometry.location.lat, it.geometry.location.lng)
+        val latLng = LatLng(it.geometry.location.lat, it.geometry.location.lng)
         myLocation = it
         myMarker?.position =
-            latlng
+            latLng
         googleMap?.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
-                latlng,
+                latLng,
                 googleMap?.maxZoomLevel ?: 17F
             )
         )
     }
 
-    private fun requestPermission(permission: String): Boolean {
-        return if (CheckPermission(permission, this)) {
+    private fun checkAndRequestPermission(permission: String): Boolean {
+        return if (checkPermission(permission, this)) {
             true
         } else {
-            RequestPermission(permission, this)
+            requestPermission(permission, this)
             false
         }
     }
 
-    private fun CheckPermission(permission: String, activity: Activity): Boolean {
+    private fun checkPermission(permission: String, activity: Activity): Boolean {
         return ContextCompat.checkSelfPermission(
             activity,
             permission
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun RequestPermission(permission: String, activity: Activity) {
+    private fun requestPermission(permission: String, activity: Activity) {
         if (permission == Manifest.permission.ACCESS_COARSE_LOCATION || permission == Manifest.permission.ACCESS_FINE_LOCATION) {
             ActivityCompat.requestPermissions(
                 activity,
@@ -89,7 +92,7 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Utility.PermissionCodeLocation && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            if (requestPermission(Manifest.permission.ACCESS_FINE_LOCATION) && requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            if (checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION) && checkAndRequestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
                 mapFragment?.getMapAsync(this)
 
 
@@ -102,13 +105,8 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
 
-
-    }
-
-
+    @SuppressLint("NotifyDataSetChanged")
     override fun initialComponent() {
 
         adapter.results.clear()
@@ -116,7 +114,7 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         placesViewModel = ViewModelProvider(this).get(PlacesViewModel::class.java)
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        if (requestPermission(Manifest.permission.ACCESS_FINE_LOCATION) && requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+        if (checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION) && checkAndRequestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
             mapFragment?.getMapAsync(this)
 
 
@@ -128,10 +126,10 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
 
     override fun clicks() {
-        rv_address.adapter = adapter
-        btn_location?.setOnClickListener {
-            if (SmartPlacesInitialize.INSTANCE.callback != null) {
-                SmartPlacesInitialize.INSTANCE.callback!!(myLocation)
+        bind.rvAddress.adapter = adapter
+        bind.btnLocation.setOnClickListener {
+            if (SmartPlacesInitialize.callback != null) {
+                SmartPlacesInitialize.callback!!(myLocation)
             } else {
                 Log.e("Smart Places ", "Call back is null")
             }
@@ -140,37 +138,30 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     }
 
 
-    override fun getInflateView(): Int {
-        return R.layout.main_screen
+    override fun getInflateView(): View {
+        bind = MainScreenBinding.inflate(layoutInflater)
+        return bind.root
     }
 
-    override fun initialObserve() {
-        placesViewModel._states.observe(this, Observer {
-            if (it != null) {
-                handleResponse(it) { response ->
-                    if (response is PlacesStates)
-                        handleSuccessResponse(response)
-                }
-            }
-        })
+    override fun getState(): LiveData<*> {
+        return placesViewModel._states
     }
 
-    private fun handleSuccessResponse(result: PlacesStates) {
-        when (result) {
+    @SuppressLint("NotifyDataSetChanged")
+    override fun invoke(p1: Any) {
+        when (p1) {
             is PlacesStates.PlacesResponseSuccess -> {
-                result.data?.results.takeIf { !it.isNullOrEmpty() }?.let { list ->
+                p1.data?.results.takeIf { !it.isNullOrEmpty() }?.let { list ->
                     myLocation = list[0]
                     adapter.results = list.toMutableList()
                     adapter.notifyDataSetChanged()
                 }
-                println("Result is ${result.data}")
             }
         }
+
     }
 
-    override fun removeObserve() {
-    }
-
+    @SuppressLint("NotifyDataSetChanged")
     override fun onMapReady(p0: GoogleMap?) {
         googleMap = p0
         googleMap?.isMyLocationEnabled = true
@@ -193,7 +184,7 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
                         )
                     )
                 )
-                placesViewModel.getPlaces(SmartPlacesInitialize.INSTANCE.apiKey, this.latitude.toString(), this.longitude.toString())
+                placesViewModel.getPlaces(getString(R.string.google_maps_key), this.latitude.toString(), this.longitude.toString())
             }
 
 
@@ -210,7 +201,7 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
             LatLng?.apply {
                 adapter.results.clear()
                 adapter.notifyDataSetChanged()
-                placesViewModel.getPlaces(SmartPlacesInitialize.INSTANCE.apiKey, this.latitude.toString(), this.longitude.toString())
+                placesViewModel.getPlaces(getString(R.string.google_maps_key), this.latitude.toString(), this.longitude.toString())
             }
         }
 

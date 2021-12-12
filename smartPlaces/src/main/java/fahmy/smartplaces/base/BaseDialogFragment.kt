@@ -3,23 +3,26 @@ package fahmy.smartplaces.base
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import fahmy.smartplaces.base.helper.handleApiError
 import fahmy.smartplaces.base.helper.showInternetMessageError
 
 
-abstract class BaseActivity() :
-    AppCompatActivity() {
-    private var mView: View? = null
-
+abstract class BaseActivity : AppCompatActivity(), (Any) -> Unit {
     private lateinit var progressBar: CustomProgressPar
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         progressBar = CustomProgressPar(this)
         setContentView(getInflateView())
         initialComponent()
-        initialObserve()
+        getState()?.observe(this) {
+            if (it is CommonStates<*>) {
+                handleResponse(it) { states ->
+                    if (states != null)
+                        this(states)
+                }
+            }
+        }
     }
 
 
@@ -55,16 +58,15 @@ abstract class BaseActivity() :
 
     override fun onStop() {
         super.onStop()
-        removeObserve()
+        getState()?.removeObserver(this)
 
     }
 
     abstract fun initialComponent()
     abstract fun clicks()
-    abstract fun getInflateView(): Int
-    abstract fun initialObserve()
-    abstract fun removeObserve()
-    fun handleResponse(response: CommonStates<*>, result: (Any?) -> Unit) {
+    abstract fun getInflateView(): View
+    abstract fun getState(): LiveData<*>?
+    private fun handleResponse(response: CommonStates<*>, result: (Any?) -> Unit) {
         when (response) {
             is CommonStates.LoadingShow -> {
                 showLoading()

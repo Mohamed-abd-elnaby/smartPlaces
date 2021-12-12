@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Google Map Key with Android SDK && Android Places -->
+    <string name="google_maps_key" />
+    <!-- RecycleView height size -->
+    <dimen name="locationsRecycleViewHeight" />
+    <!-- Chose Location Button Text Color -->
+    <color name="choseLocationButtonTextColor" />
+    <!-- Chose Location Button Background Color -->
+    <color name="choseLocationButtonBackgroundColor" />
+    <!-- RecycleView Adapter Item TextView Color -->
+    <color name="recycleViewAdapterItemTextViewColor" />
+    <!-- RecycleView Adapter Item Background Color -->
+    <color name="recycleViewAdapterItemBackgroundColor" />
+    <!-- RecycleView Background Color -->
+    <color name="recycleViewBackgroundColor" />
+    <!-- Loading Animation Color -->
+    <color name="loadingColor" />
+    <!-- Chose Location Button Text String -->
+    <string name="choseLocationButtonText" />
+</resources>

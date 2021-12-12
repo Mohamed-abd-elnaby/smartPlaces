@@ -3,7 +3,6 @@ package fahmy.smartplaces.base.helper
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
@@ -14,10 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import fahmy.smartplaces.R
-import fahmy.smartplaces.base.MainRepository
 import fahmy.smartplaces.enitities.GeneralResponse
 import fahmy.smartplaces.features.home.SmartPlacesInitialize
-import fahmy.smartplaces.repository.RepositoryClient
 import okhttp3.ResponseBody
 
 
@@ -25,33 +22,25 @@ import okhttp3.ResponseBody
  * Created by fahmy on 16/April/2019
  */
 
-fun Fragment.handleApiError(code: Int, e: ResponseBody?) {
-    handelApiError(e) { message ->
-        if (code == 401) {
 
-        } else if (code == 524) {
-        } else {
-            if (message.isEmpty())
-                Utility.errorDialog(requireContext(), getString(R.string.generic_error))
-            else
-                Utility.errorDialog(requireContext(), message)
-        }
+fun Fragment.handleApiError(e: ResponseBody?) {
+    handelApiError(e) { message ->
+        if (message.isEmpty())
+            Utility.errorDialog(requireContext(), getString(R.string.generic_error))
+        else
+            Utility.errorDialog(requireContext(), message)
+
     }
 
 }
 
-fun Dialog.handleApiError(code: Int, e: ResponseBody?) {
+fun Dialog.handleApiError(e: ResponseBody?) {
     handelApiError(e) { message ->
-        if (code == 401) {
+        if (message.isEmpty())
+            Utility.errorDialog(context, context.getString(R.string.generic_error))
+        else
+            Utility.errorDialog(context, message)
 
-
-        } else if (code == 524) {
-        } else {
-            if (message.isEmpty())
-                Utility.errorDialog(context, context.getString(R.string.generic_error))
-            else
-                Utility.errorDialog(context, message)
-        }
     }
 
 }
@@ -109,11 +98,6 @@ fun handelApiError(response: ResponseBody?, action: (String) -> Unit) {
         e.printStackTrace()
         action("")
     }
-}
-
-
-fun MainRepository.getApiClient(): RepositoryClient {
-    return RepositoryClient.repositoryClient
 }
 
 
@@ -183,12 +167,8 @@ inline fun Activity.isInternetConnected(ifConnected: () -> Unit, ifNotConnected:
         ifNotConnected()
 }
 
-fun BroadcastReceiver.isInternetConnected(): Boolean {
-    return isInternetAvailable(SmartPlacesInitialize.INSTANCE.context)
-}
-
-fun MainRepository.isInternetConnected(): Boolean {
-    return isInternetAvailable(SmartPlacesInitialize.INSTANCE.context)
+fun isInternetConnected(): Boolean {
+    return isInternetAvailable(SmartPlacesInitialize.context)
 }
 
 fun Fragment.showInternetMessageError() {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="locationsRecycleViewHeight">200dp</dimen>
+    <color name="choseLocationButtonTextColor">#FFFF</color>
+    <color name="choseLocationButtonBackgroundColor">#03DAC5</color>
+    <color name="recycleViewAdapterItemTextViewColor">#FFFF</color>
+    <color name="recycleViewBackgroundColor">#FFFF</color>
+    <color name="recycleViewAdapterItemBackgroundColor">#03DAC5</color>
+    <color name="loadingColor">#03DAC5</color>
+</resources>
