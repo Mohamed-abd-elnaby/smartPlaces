@@ -6,14 +6,9 @@ LTS 1.0.16
 
 Setup
 
-	    allprojects {
-         		repositories {
-         			...
-         			maven { url 'https://jitpack.io' }
-         		}
-         	}
-
-        dependencies { implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:{lastversion}' }
+        dependencies { 
+             implementation 'com.github.Mohamed-abd-elnaby:smartPlaces:{lastversion}' 
+            }
 		
 	    Define Configurations in values xml as below just
             
