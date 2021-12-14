@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import fahmy.smartplaces.features.home.SmartPlacesInitialize
+import fahmy.smartplaces.features.home.SmartPlaces
 
 class PlaceFragment : Fragment() {
     private lateinit var bind: FragmentMainBinding
@@ -18,7 +18,7 @@ class PlaceFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         bind.button.setOnClickListener {
-            SmartPlacesInitialize.startSmartPlaces(requireContext()) {
+            SmartPlaces.start(requireContext()) {
                 println("result from $it")
             }
 

@@ -3,7 +3,7 @@ package Fahmy.placesproject
 import Fahmy.placesproject.databinding.ActivityMainBinding
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import fahmy.smartplaces.features.home.SmartPlacesInitialize
+import fahmy.smartplaces.features.home.SmartPlaces
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bind: ActivityMainBinding
@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         bind = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bind.root)
         bind.button.setOnClickListener {
-            SmartPlacesInitialize.startSmartPlaces(this) {
+            SmartPlaces.start(this) {
                 println("result from $it")
             }
         }

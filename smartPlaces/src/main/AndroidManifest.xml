@@ -20,6 +20,7 @@
         <activity
             android:name=".features.home.SmartPlaces"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity" />
     </application>
 </manifest>

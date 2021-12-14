@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import fahmy.smartplaces.R
 import fahmy.smartplaces.enitities.GeneralResponse
-import fahmy.smartplaces.features.home.SmartPlacesInitialize
+import fahmy.smartplaces.features.home.SmartPlaces
 import okhttp3.ResponseBody
 
 
@@ -168,7 +168,7 @@ inline fun Activity.isInternetConnected(ifConnected: () -> Unit, ifNotConnected:
 }
 
 fun isInternetConnected(): Boolean {
-    return isInternetAvailable(SmartPlacesInitialize.context)
+    return isInternetAvailable(SmartPlaces.context)
 }
 
 fun Fragment.showInternetMessageError() {

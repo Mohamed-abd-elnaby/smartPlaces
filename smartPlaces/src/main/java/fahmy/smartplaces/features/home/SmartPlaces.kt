@@ -3,6 +3,8 @@ package fahmy.smartplaces.features.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
 import android.view.View
@@ -28,6 +30,7 @@ import fahmy.smartplaces.base.helper.Utility
 import fahmy.smartplaces.databinding.MainScreenBinding
 import fahmy.smartplaces.enitities.Result
 import fahmy.smartplaces.viewmodel.PlacesViewModel
+import kotlin.system.exitProcess
 
 
 //
@@ -43,6 +46,19 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     private var googleMap: GoogleMap? = null
     private var myLocation: Result? = null
     private lateinit var bind: MainScreenBinding
+
+    companion object {
+        var callback: ((Result?) -> Unit)? = null
+
+        @SuppressLint("StaticFieldLeak")
+        lateinit var context: Context
+        fun start(context: Context, callback: (Result?) -> Unit) {
+            this.callback = callback
+            this.context = context
+            context.startActivity(Intent(context, SmartPlaces::class.java))
+        }
+    }
+
     private val adapter = AddressAdapter {
         val latLng = LatLng(it.geometry.location.lat, it.geometry.location.lng)
         myLocation = it
@@ -128,8 +144,8 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     override fun clicks() {
         bind.rvAddress.adapter = adapter
         bind.btnLocation.setOnClickListener {
-            if (SmartPlacesInitialize.callback != null) {
-                SmartPlacesInitialize.callback!!(myLocation)
+            if (callback != null) {
+                callback!!(myLocation)
             } else {
                 Log.e("Smart Places ", "Call back is null")
             }
@@ -140,6 +156,7 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
     override fun getInflateView(): View {
         bind = MainScreenBinding.inflate(layoutInflater)
+
         return bind.root
     }
 
@@ -163,6 +180,10 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onMapReady(p0: GoogleMap?) {
+        if (getString(R.string.google_maps_key).isEmpty() || getString(R.string.google_maps_key) == "Your Map Key" || getString(R.string.google_maps_key).length < 14) {
+            Log.e("Smart Places", "Google Map Key should be add in your strings")
+            exitProcess(0)
+        }
         googleMap = p0
         googleMap?.isMyLocationEnabled = true
         googleMap?.setMaxZoomPreference(15F)
