@@ -3,8 +3,6 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
 }
-
-group = 'com.github.Mohamed-abd-elnaby'
 android {
 
     compileSdkVersion 31
