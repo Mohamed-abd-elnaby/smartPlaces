@@ -198,6 +198,7 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
         googleMap?.setMaxZoomPreference(15F)
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             location?.apply {
+                myLocation = Result(Geometry(Location(latitude, longitude)), name = getAddress(latitude, longitude))
                 googleMap?.moveCamera(
                     CameraUpdateFactory.newLatLngZoom(
                         LatLng(
@@ -246,35 +247,14 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
             val addresses: List<Address> = geocoder.getFromLocation(lat, lng, 1)
             val obj: Address = addresses[0]
             var add: String = obj.getAddressLine(0)
-            add = """
-                 $add
-                 ${obj.countryName}
-                 """.trimIndent()
-            add = """
-                 $add
-                 ${obj.countryCode}
-                 """.trimIndent()
-            add = """
-                 $add
-                 ${obj.adminArea}
-                 """.trimIndent()
-            add = """
-                 $add
-                 ${obj.postalCode}
-                 """.trimIndent()
-            add = """
-                 $add
-                 ${obj.subAdminArea}
-                 """.trimIndent()
-            add = """
-                 $add
-                 ${obj.locality}
-                 """.trimIndent()
-            add = """
-                 $add
-                 ${obj.subThoroughfare}
-                 """.trimIndent()
-            add
+            add = """ $add${obj.countryName}""".trimIndent()
+            add = """$add${obj.countryCode}""".trimIndent()
+            add = """ $add${obj.adminArea} """.trimIndent()
+            add = """$add${obj.postalCode}""".trimIndent()
+            add = """$add${obj.subAdminArea}""".trimIndent()
+            add = """$add ${obj.locality} """.trimIndent()
+            add = """$add${obj.subThoroughfare} """.trimIndent()
+            add.trimIndent()
         } catch (e: Exception) {
             e.printStackTrace()
             ""
