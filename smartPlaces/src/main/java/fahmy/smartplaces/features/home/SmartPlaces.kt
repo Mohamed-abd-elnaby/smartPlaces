@@ -6,6 +6,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -28,8 +30,11 @@ import fahmy.smartplaces.base.BaseActivity
 import fahmy.smartplaces.base.PlacesStates
 import fahmy.smartplaces.base.helper.Utility
 import fahmy.smartplaces.databinding.MainScreenBinding
+import fahmy.smartplaces.enitities.Geometry
+import fahmy.smartplaces.enitities.Location
 import fahmy.smartplaces.enitities.Result
 import fahmy.smartplaces.viewmodel.PlacesViewModel
+import java.util.*
 import kotlin.system.exitProcess
 
 
@@ -49,12 +54,14 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
     companion object {
         var callback: ((Result?) -> Unit)? = null
+        var findNearbyPlaces: Boolean = false
 
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
-        fun start(context: Context, callback: (Result?) -> Unit) {
+        fun start(context: Context, findNearbyPlaces: Boolean = false, callback: (Result?) -> Unit) {
             this.callback = callback
             this.context = context
+            this.findNearbyPlaces = findNearbyPlaces
             context.startActivity(Intent(context, SmartPlaces::class.java))
         }
     }
@@ -124,9 +131,13 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun initialComponent() {
+        if (findNearbyPlaces) {
+            adapter.results.clear()
+            adapter.notifyDataSetChanged()
+            bind.rvAddress.adapter = adapter
+            bind.rvAddress.visibility = View.VISIBLE
+        }
 
-        adapter.results.clear()
-        adapter.notifyDataSetChanged()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         placesViewModel = ViewModelProvider(this).get(PlacesViewModel::class.java)
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -142,12 +153,11 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
 
     override fun clicks() {
-        bind.rvAddress.adapter = adapter
         bind.btnLocation.setOnClickListener {
-            if (callback != null) {
-                callback!!(myLocation)
+            if (callback != null && myLocation != null) {
+                callback?.let { it(myLocation) }
             } else {
-                Log.e("Smart Places ", "Call back is null")
+                Log.e("Smart Places ", "Location Not Chosen")
             }
             finish()
         }
@@ -156,7 +166,6 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
     override fun getInflateView(): View {
         bind = MainScreenBinding.inflate(layoutInflater)
-
         return bind.root
     }
 
@@ -205,27 +214,71 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
                         )
                     )
                 )
-                placesViewModel.getPlaces(getString(R.string.google_maps_key), this.latitude.toString(), this.longitude.toString())
             }
 
 
         }
 
         fusedLocationClient.lastLocation.addOnFailureListener {
-
             finish()
         }
 
         googleMap?.setOnMapLongClickListener { LatLng ->
             if (myMarker != null)
                 myMarker?.position = LatLng
-            LatLng?.apply {
-                adapter.results.clear()
-                adapter.notifyDataSetChanged()
-                placesViewModel.getPlaces(getString(R.string.google_maps_key), this.latitude.toString(), this.longitude.toString())
+
+            if (findNearbyPlaces)
+                LatLng?.apply {
+                    adapter.results.clear()
+                    adapter.notifyDataSetChanged()
+                    placesViewModel.getPlaces(getString(R.string.google_maps_key), this.latitude.toString(), this.longitude.toString())
+                }
+            else {
+                myLocation = Result(Geometry(Location(LatLng.latitude, LatLng.longitude)), name = getAddress(LatLng.latitude, LatLng.longitude))
             }
         }
 
+    }
+
+    private fun getAddress(lat: Double, lng: Double): String {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        return try {
+            val addresses: List<Address> = geocoder.getFromLocation(lat, lng, 1)
+            val obj: Address = addresses[0]
+            var add: String = obj.getAddressLine(0)
+            add = """
+                 $add
+                 ${obj.countryName}
+                 """.trimIndent()
+            add = """
+                 $add
+                 ${obj.countryCode}
+                 """.trimIndent()
+            add = """
+                 $add
+                 ${obj.adminArea}
+                 """.trimIndent()
+            add = """
+                 $add
+                 ${obj.postalCode}
+                 """.trimIndent()
+            add = """
+                 $add
+                 ${obj.subAdminArea}
+                 """.trimIndent()
+            add = """
+                 $add
+                 ${obj.locality}
+                 """.trimIndent()
+            add = """
+                 $add
+                 ${obj.subThoroughfare}
+                 """.trimIndent()
+            add
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
     }
 
 }

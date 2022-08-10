@@ -32,7 +32,8 @@ Setup
             <string name="choseLocationButtonText">Your Text</string>
 
 Using
-
-	  SmartPlacesInitialize.startSmartPlaces(Require Context) {
+      
+	  SmartPlacesInitialize.startSmartPlaces(Require Context,findNearbyPlaces: Boolean) {
                         //using result here
                     }
+      //using findNearbyPlaces with true you will using google places APi with fees and must be enable

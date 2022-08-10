@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         bind = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bind.root)
         bind.button.setOnClickListener {
-            SmartPlaces.start(this) {
+            SmartPlaces.start(this, findNearbyPlaces = false) {
                 println("result from $it")
             }
         }

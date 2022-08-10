@@ -5,5 +5,5 @@ import androidx.annotation.Keep
 @Keep
 data class Geometry(
     val location: Location,
-    val viewport: Viewport
+    val viewport: Viewport?=null
 )
