@@ -9,7 +9,7 @@ import retrofit2.http.Query
  * Created by mohamed abd elnaby on 16/April/2019
  */
 
-interface EndPoint {
+internal interface EndPoint {
     @GET("maps/api/place/nearbysearch/json")
     suspend fun fetchPlaces(
         @Query("key") key: String,

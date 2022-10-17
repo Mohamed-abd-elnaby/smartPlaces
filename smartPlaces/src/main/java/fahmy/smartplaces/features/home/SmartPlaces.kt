@@ -8,6 +8,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
+import android.os.Build
+import android.os.Build.VERSION_CODES
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -43,7 +45,7 @@ import java.util.*
 
 @Keep
 class SmartPlaces : BaseActivity(), OnMapReadyCallback {
-    private  var fusedLocationClient: FusedLocationProviderClient?=null
+    private var fusedLocationClient: FusedLocationProviderClient? = null
     private lateinit var placesViewModel: PlacesViewModel
     private var mapFragment: SupportMapFragment? = null
     private var myMarker: Marker? = null
@@ -191,7 +193,9 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
         googleMap?.setMaxZoomPreference(15F)
         fusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
             location?.apply {
-                myLocation = Result(Geometry(Location(latitude, longitude)), name = getAddress(latitude, longitude))
+                getAddress(latitude, longitude) { name ->
+                    myLocation = Result(Geometry(Location(latitude, longitude)), name = name)
+                }
                 googleMap?.moveCamera(
                     CameraUpdateFactory.newLatLngZoom(
                         LatLng(
@@ -228,25 +232,44 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
                     placesViewModel.getPlaces(getString(R.string.google_maps_key), this.latitude.toString(), this.longitude.toString())
                 }
             else {
-                myLocation = Result(Geometry(Location(LatLng.latitude, LatLng.longitude)), name = getAddress(LatLng.latitude, LatLng.longitude))
+                getAddress(LatLng.latitude, LatLng.longitude) {
+                    myLocation = Result(Geometry(Location(LatLng.latitude, LatLng.longitude)), name = it)
+                }
+
             }
         }
 
     }
 
-    private fun getAddress(lat: Double, lng: Double): String {
+    private fun getAddress(lat: Double, lng: Double, callback: (String?) -> Unit) {
         val geocoder = Geocoder(context, Locale.getDefault())
+
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+            geocoder.getFromLocation(lat, lng, 1) { p0 ->
+                p0.takeIf { it.isNotEmpty() }?.let {
+                    callback(displayAddress(it[0]))
+                }
+            }
+        } else {
+            val addresses: MutableList<Address?>? = geocoder.getFromLocation(lat, lng, 1)
+            addresses.takeIf { it.isNullOrEmpty() }?.let {
+                callback(displayAddress(it[0]))
+            }
+        }
+
+
+    }
+
+    private fun displayAddress(obj: Address?): String {
         return try {
-            val addresses: List<Address> = geocoder.getFromLocation(lat, lng, 1)
-            val obj: Address = addresses[0]
-            var add: String = obj.getAddressLine(0)
-            add = """ $add${obj.countryName}""".trimIndent()
-            add = """$add${obj.countryCode}""".trimIndent()
-            add = """ $add${obj.adminArea} """.trimIndent()
-            add = """$add${obj.postalCode}""".trimIndent()
-            add = """$add${obj.subAdminArea}""".trimIndent()
-            add = """$add ${obj.locality} """.trimIndent()
-            add = """$add${obj.subThoroughfare} """.trimIndent()
+            var add: String? = obj?.getAddressLine(0)
+            add = """ $add${obj?.countryName}""".trimIndent()
+            add = """$add${obj?.countryCode}""".trimIndent()
+            add = """ $add${obj?.adminArea} """.trimIndent()
+            add = """$add${obj?.postalCode}""".trimIndent()
+            add = """$add${obj?.subAdminArea}""".trimIndent()
+            add = """$add ${obj?.locality} """.trimIndent()
+            add = """$add${obj?.subThoroughfare} """.trimIndent()
             add.trimIndent()
         } catch (e: Exception) {
             e.printStackTrace()

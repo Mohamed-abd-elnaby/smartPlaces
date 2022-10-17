@@ -11,7 +11,7 @@ import fahmy.smartplaces.repository.RepositoryClient
 // Created by Fahmy on 2/17/20.
 //
 
-class PlacesViewModel() : MainRepository() {
+internal class PlacesViewModel() : MainRepository() {
 
 
     private var states = SingleLiveEvent<CommonStates<PlacesStates>>()

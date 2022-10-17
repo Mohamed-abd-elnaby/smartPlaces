@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
  */
 
 
-abstract class MainRepository : ViewModel() {
+internal abstract class MainRepository : ViewModel() {
 
 
     fun fetchData(states: Any, showProgress: Boolean, worker: suspend (() -> Unit)) =

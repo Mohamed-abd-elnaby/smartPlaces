@@ -10,7 +10,7 @@ import fahmy.smartplaces.R
 import java.util.*
 
 
-object Utility {
+internal object Utility {
 
     const val PermissionCodeLocation = 600
     const val PermissionCode = 601

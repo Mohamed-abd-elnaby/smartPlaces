@@ -3,21 +3,21 @@ package fahmy.smartplaces.base
 import fahmy.smartplaces.enitities.PlacesResponse
 import okhttp3.ResponseBody
 
-sealed class CommonStates<out T> {
-    object LoadingShow : CommonStates<Nothing>()
-    object NoInternet : CommonStates<Nothing>()
-    object EmptyState : CommonStates<Nothing>()
-    data class Success<out R>(val data: R) : CommonStates<R>()
-    data class Error(val code: Int, val exp: ResponseBody?) : CommonStates<Nothing>()
+internal sealed class CommonStates<out T> {
+    internal object LoadingShow : CommonStates<Nothing>()
+    internal  object NoInternet : CommonStates<Nothing>()
+    internal object EmptyState : CommonStates<Nothing>()
+    internal data class Success<out R>(val data: R) : CommonStates<R>()
+    internal data class Error(val code: Int, val exp: ResponseBody?) : CommonStates<Nothing>()
 }
 
-sealed class FCMState {
+internal sealed class FCMState {
 
-    data class FCMSuccess(val id: Int, val title: String, val body: String) : FCMState()
+    internal data class FCMSuccess(val id: Int, val title: String, val body: String) : FCMState()
 }
 
-sealed class PlacesStates {
-    data class PlacesResponseSuccess(val data: PlacesResponse?) : PlacesStates()
+internal sealed class PlacesStates {
+    internal data class PlacesResponseSuccess(val data: PlacesResponse?) : PlacesStates()
 
 
 }

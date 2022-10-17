@@ -23,7 +23,7 @@ import okhttp3.ResponseBody
  */
 
 
-fun Fragment.handleApiError(e: ResponseBody?) {
+ internal fun Fragment.handleApiError(e: ResponseBody?) {
     handelApiError(e) { message ->
         if (message.isEmpty())
             Utility.errorDialog(requireContext(), getString(R.string.generic_error))
@@ -34,7 +34,7 @@ fun Fragment.handleApiError(e: ResponseBody?) {
 
 }
 
-fun Dialog.handleApiError(e: ResponseBody?) {
+ internal fun Dialog.handleApiError(e: ResponseBody?) {
     handelApiError(e) { message ->
         if (message.isEmpty())
             Utility.errorDialog(context, context.getString(R.string.generic_error))
@@ -44,51 +44,10 @@ fun Dialog.handleApiError(e: ResponseBody?) {
     }
 
 }
-//
-//fun Fragment.getAddress(
-//    showLoading: () -> Unit,
-//    hideLoading: () -> Unit,
-//    callBack: (Place) -> Unit
-//
-//) {
-//    showLoading()
-//    val placesClient: PlacesClient = Places.createClient(requireContext())
-//
-//    val placeFields = mutableListOf(Place.Field.ADDRESS, Place.Field.LAT_LNG)
-//    val request = FindCurrentPlaceRequest.newInstance(placeFields)
-//    if (ContextCompat.checkSelfPermission(
-//            requireContext(),
-//            Manifest.permission.ACCESS_FINE_LOCATION
-//        ) == PackageManager.PERMISSION_GRANTED
-//    ) {
-//        val placeResponse: Task<FindCurrentPlaceResponse?> =
-//            placesClient.findCurrentPlace(request)
-//        placeResponse.addOnCompleteListener { task: Task<FindCurrentPlaceResponse?> ->
-//            hideLoading()
-//            if (task.isSuccessful) {
-//                task.result.takeIf { it != null }?.let { currentPlace ->
-//                    currentPlace.takeIf { it.placeLikelihoods.size > 0 }?.let {
-//                        val place = it.placeLikelihoods[0].place
-//                        callBack(place)
-//                        Toast.makeText(requireContext(), place.address, Toast.LENGTH_LONG)
-//                            .show()
-//
-//                    }
-//
-//                }
-//
-//            } else {
-//                val exception = task.exception
-//                if (exception is ApiException) {
-//                    Log.e("Places", "Place not found: " + exception.message)
-//                }
-//            }
-//        }
-//    }
-//}
 
 
-fun handelApiError(response: ResponseBody?, action: (String) -> Unit) {
+
+internal fun handelApiError(response: ResponseBody?, action: (String) -> Unit) {
     try {
         val dataSting = response?.string()
         val data = Gson().fromJson(dataSting, GeneralResponse::class.java)
@@ -101,7 +60,7 @@ fun handelApiError(response: ResponseBody?, action: (String) -> Unit) {
 }
 
 
-fun Activity.handleApiError(code: Int, e: ResponseBody?) {
+internal fun Activity.handleApiError(code: Int, e: ResponseBody?) {
     handelApiError(e) { message ->
         when (code) {
             401 -> {
@@ -121,7 +80,7 @@ fun Activity.handleApiError(code: Int, e: ResponseBody?) {
 
 }
 
-fun isInternetAvailable(context: Context?): Boolean {
+internal fun isInternetAvailable(context: Context?): Boolean {
     var result = false
     val connectivityManager =
         context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -152,7 +111,7 @@ fun isInternetAvailable(context: Context?): Boolean {
     return result
 }
 
-inline fun Fragment.isInternetConnected(ifConnected: () -> Unit, ifNotConnected: () -> Unit) {
+inline internal fun Fragment.isInternetConnected(ifConnected: () -> Unit, ifNotConnected: () -> Unit) {
 
     if (isInternetAvailable(requireContext()))
         ifConnected()
@@ -160,30 +119,30 @@ inline fun Fragment.isInternetConnected(ifConnected: () -> Unit, ifNotConnected:
         ifNotConnected()
 }
 
-inline fun Activity.isInternetConnected(ifConnected: () -> Unit, ifNotConnected: () -> Unit) {
+inline internal fun Activity.isInternetConnected(ifConnected: () -> Unit, ifNotConnected: () -> Unit) {
     if (isInternetAvailable(this))
         ifConnected()
     else
         ifNotConnected()
 }
 
-fun isInternetConnected(): Boolean {
+internal fun isInternetConnected(): Boolean {
     return isInternetAvailable(SmartPlaces.context)
 }
 
-fun Fragment.showInternetMessageError() {
+internal fun Fragment.showInternetMessageError() {
     Utility.errorDialog(requireContext(), getString(R.string.noInternet))
 }
 
-fun Dialog.showInternetMessageError() {
+internal fun Dialog.showInternetMessageError() {
     Utility.errorDialog(context, context.getString(R.string.noInternet))
 }
 
-fun Activity.showInternetMessageError() {
+internal fun Activity.showInternetMessageError() {
     Utility.errorDialog(this, getString(R.string.noInternet))
 }
 
-fun Fragment.requestPermission(permission: String): Boolean {
+internal fun Fragment.requestPermission(permission: String): Boolean {
     return if (CheckPermission(permission, requireActivity())) {
         true
     } else {
@@ -193,14 +152,14 @@ fun Fragment.requestPermission(permission: String): Boolean {
 }
 
 
-private fun CheckPermission(permission: String, activity: Activity): Boolean {
+private  fun CheckPermission(permission: String, activity: Activity): Boolean {
     return ContextCompat.checkSelfPermission(
         activity,
         permission
     ) == PackageManager.PERMISSION_GRANTED
 }
 
-private fun RequestPermission(permission: String, activity: Activity) {
+private  fun RequestPermission(permission: String, activity: Activity) {
     if (permission == Manifest.permission.ACCESS_COARSE_LOCATION || permission == Manifest.permission.ACCESS_FINE_LOCATION) {
         ActivityCompat.requestPermissions(
             activity,

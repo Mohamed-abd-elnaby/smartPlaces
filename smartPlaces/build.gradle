@@ -16,20 +16,26 @@ task androidSourcesJar(type: Jar) {
     classifier 'sources'
     from android.sourceSets.main.java.srcDirs
 }
-
-project.afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                artifact androidSourcesJar // optional sources
-            }
-        }
-    }
-}
+//
+//project.afterEvaluate {
+//    publishing {
+//        publications {
+//            release(MavenPublication) {
+//                from components.release
+//                artifact androidSourcesJar // optional sources
+//            }
+//        }
+//    }
+//}
 
 android {
-    compileSdkVersion 32
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+    compileSdkVersion 33
     defaultConfig {
         minSdkVersion 22
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -68,9 +74,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.8'
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.5'
 
-    //implement JavaRx
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
 
     // RXJava adapter
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
@@ -80,12 +83,10 @@ dependencies {
 
     //Live Data
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.compose.material:material:1.2.1'
 
 
     //google Map
     implementation 'com.google.android.gms:play-services-location:21.0.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'

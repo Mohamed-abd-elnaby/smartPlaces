@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
  * Created by mohamed abd elnaby on 16/April/2019
  */
 
-object BaseClientApi {
+internal object BaseClientApi {
     private const val BASIC_URL = "https://maps.googleapis.com/"
 
     fun getRetrofitClient(): Retrofit {

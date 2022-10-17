@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import fahmy.smartplaces.features.home.SmartPlaces
 
-class PlaceFragment : Fragment() {
+internal class PlaceFragment : Fragment() {
     private lateinit var bind: FragmentMainBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = FragmentMainBinding.inflate(inflater, container, false)

@@ -10,7 +10,7 @@ import fahmy.smartplaces.R
 /**
  * Created by fahmy on 17/April/2019
  */
-class CustomProgressPar(context: Context) : AlertDialog(context) {
+internal class CustomProgressPar(context: Context) : AlertDialog(context) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.custom_progressbar)

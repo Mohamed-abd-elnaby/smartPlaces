@@ -12,7 +12,7 @@ import fahmy.smartplaces.enitities.Result
 //
 
 @Keep
-class AddressAdapter(var callBack: (Result) -> Unit) :
+internal class AddressAdapter(var callBack: (Result) -> Unit) :
     RecyclerView.Adapter<AddressAdapter.ViewHolder>() {
 
     class ViewHolder(var view: SmartplacesAddressItemBinding, var callBack: (Result) -> Unit) :

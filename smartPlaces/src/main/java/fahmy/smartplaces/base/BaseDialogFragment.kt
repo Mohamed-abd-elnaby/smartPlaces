@@ -62,10 +62,10 @@ abstract class BaseActivity : AppCompatActivity(), (Any) -> Unit {
 
     }
 
-    abstract fun initialComponent()
-    abstract fun clicks()
-    abstract fun getInflateView(): View
-    abstract fun getState(): LiveData<*>?
+    internal abstract fun initialComponent()
+    internal abstract fun clicks()
+    internal abstract fun getInflateView(): View
+    internal abstract fun getState(): LiveData<*>?
     private fun handleResponse(response: CommonStates<*>, result: (Any?) -> Unit) {
         when (response) {
             is CommonStates.LoadingShow -> {

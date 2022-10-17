@@ -3,7 +3,7 @@ package fahmy.smartplaces.enitities
 import androidx.annotation.Keep
 
 @Keep
-data class Photo(
+ data class Photo(
     val height: Int,
     val html_attributions: List<String>,
     val photo_reference: String,

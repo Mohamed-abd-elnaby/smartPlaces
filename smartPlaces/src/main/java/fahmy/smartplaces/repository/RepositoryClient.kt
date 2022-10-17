@@ -8,7 +8,7 @@ import retrofit2.Response
  * Created by mohamed abd elnaby on 16/April/2019
  */
 
-class RepositoryClient {
+internal class RepositoryClient {
     var endPoint: EndPoint = BaseClientApi.getRetrofitClient().create(EndPoint::class.java)
 
 

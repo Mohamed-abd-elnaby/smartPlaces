@@ -7,7 +7,7 @@ import androidx.annotation.Keep
  */
 
 @Keep
-class GeneralResponse(
+internal class GeneralResponse(
 
     var msg: String,
     var sms_code: String,
