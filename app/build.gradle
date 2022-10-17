@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 android {
 
@@ -12,7 +12,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//        signingConfig signingConfigs.debug
     }
 
     buildTypes {

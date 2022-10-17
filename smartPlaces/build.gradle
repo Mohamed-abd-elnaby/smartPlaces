@@ -27,6 +27,15 @@ task androidSourcesJar(type: Jar) {
 //        }
 //    }
 //}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'com.github.Mohamed-abd-elnaby'
+            artifactId = 'library'
+            version = '1.0.27'
+        }
+    }
+}
 
 android {
     publishing {
