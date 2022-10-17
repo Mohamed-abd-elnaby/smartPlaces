@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
-    id("kotlin-android")
-    id("kotlin-kapt")
+    id "kotlin-android"
+    id "kotlin-kapt"
     id 'maven-publish'
 }
 group = 'com.github.Mohamed-abd-elnaby'
@@ -27,23 +27,8 @@ task androidSourcesJar(type: Jar) {
 //        }
 //    }
 //}
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId = 'com.github.Mohamed-abd-elnaby'
-            artifactId = 'library'
-            version = '1.0.27'
-        }
-    }
-}
 
 android {
-    publishing {
-        singleVariant('release') {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
     compileSdkVersion 33
     defaultConfig {
         minSdkVersion 22
