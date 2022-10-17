@@ -35,7 +35,6 @@ import fahmy.smartplaces.enitities.Location
 import fahmy.smartplaces.enitities.Result
 import fahmy.smartplaces.viewmodel.PlacesViewModel
 import java.util.*
-import kotlin.system.exitProcess
 
 
 //
@@ -44,7 +43,7 @@ import kotlin.system.exitProcess
 
 @Keep
 class SmartPlaces : BaseActivity(), OnMapReadyCallback {
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private  var fusedLocationClient: FusedLocationProviderClient?=null
     private lateinit var placesViewModel: PlacesViewModel
     private var mapFragment: SupportMapFragment? = null
     private var myMarker: Marker? = null
@@ -143,8 +142,6 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         if (checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION) && checkAndRequestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
             mapFragment?.getMapAsync(this)
-
-
         } else {
             Log.e("Smart Places", "need location permission")
         }
@@ -189,14 +186,10 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onMapReady(p0: GoogleMap?) {
-        if (getString(R.string.google_maps_key).isEmpty() || getString(R.string.google_maps_key) == "Your Map Key" || getString(R.string.google_maps_key).length < 14) {
-            Log.e("Smart Places", "Google Map Key should be add in your strings")
-            exitProcess(0)
-        }
         googleMap = p0
         googleMap?.isMyLocationEnabled = true
         googleMap?.setMaxZoomPreference(15F)
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+        fusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
             location?.apply {
                 myLocation = Result(Geometry(Location(latitude, longitude)), name = getAddress(latitude, longitude))
                 googleMap?.moveCamera(
@@ -220,7 +213,7 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
         }
 
-        fusedLocationClient.lastLocation.addOnFailureListener {
+        fusedLocationClient?.lastLocation?.addOnFailureListener {
             finish()
         }
 
