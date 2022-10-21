@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="fahmy.smartplaces">
+    package="com.smartplaces">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -18,7 +18,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".features.home.SmartPlaces"
+            android:name="com.smartplaces.features.home.SmartPlaces"
             android:screenOrientation="portrait"
             android:exported="true"
             tools:ignore="LockedOrientationActivity" />

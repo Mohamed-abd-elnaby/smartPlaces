@@ -3,7 +3,7 @@ package Fahmy.placesproject
 import Fahmy.placesproject.databinding.ActivityMainBinding
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import fahmy.smartplaces.features.home.SmartPlaces
+import com.smartplaces.features.home.SmartPlaces
 
 internal class MainActivity : AppCompatActivity() {
     private lateinit var bind: ActivityMainBinding

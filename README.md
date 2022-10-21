@@ -2,7 +2,7 @@
 
     google maps places with smart way
 
-LTS 1.0.27
+LTS 1.0.28
 
 Setup
 

@@ -4,6 +4,14 @@ plugins {
     id 'kotlin-kapt'
 }
 android {
+    signingConfigs {
+        release {
+            storeFile file('/Volumes/Work/keys/Places')
+            storePassword 'Places@2022'
+            keyAlias 'PLACES'
+            keyPassword 'Places@2022'
+        }
+    }
 
     compileSdkVersion 33
     defaultConfig {
@@ -12,6 +20,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
