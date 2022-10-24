@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
+        android:name=".base.MainApp"
         android:allowBackup="false"
         tools:ignore="MissingApplicationIcon">
         <meta-data

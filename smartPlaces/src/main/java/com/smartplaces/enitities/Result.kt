@@ -7,7 +7,7 @@ data class Result(
     val geometry: Geometry,
     val icon: String?=null,
     val id: String?=null,
-    val name: String?,
+    var name: String?="",
     val opening_hours: OpeningHours?=null,
     val photos: List<Photo>?=null,
     val place_id: String?=null,

@@ -3,7 +3,6 @@ package com.smartplaces.features.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
@@ -44,7 +43,7 @@ import java.util.*
 //
 
 @Keep
-class SmartPlaces : BaseActivity(), OnMapReadyCallback {
+class  SmartPlaces<T> : BaseActivity(), OnMapReadyCallback {
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private lateinit var placesViewModel: PlacesViewModel
     private var mapFragment: SupportMapFragment? = null
@@ -52,18 +51,14 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     private var googleMap: GoogleMap? = null
     private var myLocation: Result? = null
     private lateinit var bind: MainScreenBinding
-
     companion object {
         var callback: ((Result?) -> Unit)? = null
         var findNearbyPlaces: Boolean = false
-
         @SuppressLint("StaticFieldLeak")
-        lateinit var context: Context
-        fun start(context: Context, findNearbyPlaces: Boolean = false, callback: (Result?) -> Unit) {
+        fun start(activity: Activity, findNearbyPlaces: Boolean = false, callback: (Result?) -> Unit) {
             this.callback = callback
-            this.context = context
             this.findNearbyPlaces = findNearbyPlaces
-            context.startActivity(Intent(context, SmartPlaces::class.java))
+            activity.startActivity(Intent(activity, SmartPlaces::class.java))
         }
     }
 
@@ -87,6 +82,10 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
             requestPermission(permission, this)
             false
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     private fun checkPermission(permission: String, activity: Activity): Boolean {
@@ -153,8 +152,15 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
     override fun clicks() {
         bind.btnLocation.setOnClickListener {
-            if (callback != null && myLocation != null) {
-                callback?.let { it(myLocation) }
+            if (myLocation != null) {
+                if (myLocation?.name.isNullOrEmpty())
+                    getAddress(myLocation?.geometry?.location?.lat ?: 0.0, myLocation?.geometry?.location?.lng ?: 0.0) {
+                        myLocation?.name = it
+                        callback?.let { it(myLocation) }
+                    }
+                else {
+                    callback?.let { it(myLocation) }
+                }
             } else {
                 Log.e("Smart Places ", "Location Not Chosen")
             }
@@ -193,8 +199,9 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
         googleMap?.setMaxZoomPreference(15F)
         fusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
             location?.apply {
+                myLocation = Result(Geometry(Location(latitude, longitude)))
                 getAddress(latitude, longitude) { name ->
-                    myLocation = Result(Geometry(Location(latitude, longitude)), name = name)
+                    myLocation?.name = name
                 }
                 googleMap?.moveCamera(
                     CameraUpdateFactory.newLatLngZoom(
@@ -216,12 +223,11 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
 
 
         }
-
         fusedLocationClient?.lastLocation?.addOnFailureListener {
             finish()
         }
-
         googleMap?.setOnMapLongClickListener { LatLng ->
+            showLoading()
             if (myMarker != null)
                 myMarker?.position = LatLng
 
@@ -232,17 +238,18 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
                     placesViewModel.getPlaces(getString(R.string.google_maps_key), this.latitude.toString(), this.longitude.toString())
                 }
             else {
+                myLocation = Result(Geometry(Location(LatLng.latitude, LatLng.longitude)))
                 getAddress(LatLng.latitude, LatLng.longitude) {
-                    myLocation = Result(Geometry(Location(LatLng.latitude, LatLng.longitude)), name = it)
+                    myLocation?.name = it
                 }
-
             }
+            hideLoading()
         }
 
     }
 
     private fun getAddress(lat: Double, lng: Double, callback: (String?) -> Unit) {
-        val geocoder = Geocoder(context, Locale.getDefault())
+        val geocoder = Geocoder(this, Locale.getDefault())
 
         if (Build.VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
             geocoder.getFromLocation(lat, lng, 1) { p0 ->
@@ -252,7 +259,7 @@ class SmartPlaces : BaseActivity(), OnMapReadyCallback {
             }
         } else {
             val addresses: MutableList<Address?>? = geocoder.getFromLocation(lat, lng, 1)
-            addresses.takeIf { it.isNullOrEmpty() }?.let {
+            addresses.takeIf { !it.isNullOrEmpty() }?.let {
                 callback(displayAddress(it[0]))
             }
         }

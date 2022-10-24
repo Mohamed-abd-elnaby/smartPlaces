@@ -18,7 +18,7 @@ internal class PlaceFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         bind.button.setOnClickListener {
-            SmartPlaces.start(requireContext()) {
+            SmartPlaces.start(requireActivity()) {
                 println("result from $it")
             }
 
