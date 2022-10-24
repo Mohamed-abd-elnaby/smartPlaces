@@ -43,7 +43,7 @@ import java.util.*
 //
 
 @Keep
-class  SmartPlaces<T> : BaseActivity(), OnMapReadyCallback {
+class SmartPlaces : BaseActivity(), OnMapReadyCallback {
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private lateinit var placesViewModel: PlacesViewModel
     private var mapFragment: SupportMapFragment? = null
@@ -51,12 +51,16 @@ class  SmartPlaces<T> : BaseActivity(), OnMapReadyCallback {
     private var googleMap: GoogleMap? = null
     private var myLocation: Result? = null
     private lateinit var bind: MainScreenBinding
+
     companion object {
         var callback: ((Result?) -> Unit)? = null
         var findNearbyPlaces: Boolean = false
+
         @SuppressLint("StaticFieldLeak")
+        lateinit var activity: Activity
         fun start(activity: Activity, findNearbyPlaces: Boolean = false, callback: (Result?) -> Unit) {
             this.callback = callback
+            this.activity = activity
             this.findNearbyPlaces = findNearbyPlaces
             activity.startActivity(Intent(activity, SmartPlaces::class.java))
         }

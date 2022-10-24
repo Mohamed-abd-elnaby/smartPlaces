@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.smartplaces.R
-import com.smartplaces.base.MainApp
 import com.smartplaces.enitities.GeneralResponse
 import com.smartplaces.features.home.SmartPlaces
 import okhttp3.ResponseBody
@@ -128,7 +127,7 @@ inline internal fun Activity.isInternetConnected(ifConnected: () -> Unit, ifNotC
 }
 
 internal fun isInternetConnected(): Boolean {
-    return isInternetAvailable(MainApp.instance)
+    return isInternetAvailable(SmartPlaces.activity)
 }
 
 internal fun Fragment.showInternetMessageError() {
