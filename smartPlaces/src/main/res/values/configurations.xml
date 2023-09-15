@@ -18,4 +18,5 @@
     <color name="loadingColor" />
     <!-- Chose Location Button Text String -->
     <string name="choseLocationButtonText" />
+    <string name="noLocationSelectMessage" />
 </resources>

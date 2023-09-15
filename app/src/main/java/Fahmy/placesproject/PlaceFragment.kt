@@ -18,9 +18,9 @@ internal class PlaceFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         bind.button.setOnClickListener {
-            SmartPlaces.start(requireActivity()) {
+            SmartPlaces.start(requireActivity(), mustChoseLocation = true, successCallback = {
                 println("result from $it")
-            }
+            })
 
         }
     }

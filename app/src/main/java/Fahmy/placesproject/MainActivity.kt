@@ -12,9 +12,9 @@ internal class MainActivity : AppCompatActivity() {
         bind = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bind.root)
         bind.button.setOnClickListener {
-            SmartPlaces.start(this, findNearbyPlaces = false) {
+            SmartPlaces.start(this, findNearbyPlaces = false, mustChoseLocation = true, successCallback = {
                 println("result from $it")
-            }
+            })
         }
 
     }
