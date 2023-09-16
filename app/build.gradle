@@ -26,9 +26,12 @@ android {
         viewBinding true
     }
     namespace 'Fahmy.placesproject'
+    kotlinOptions {
+        jvmTarget = '18'
+    }
     compileOptions {
-        sourceCompatibility "20"
-        targetCompatibility "20"
+        sourceCompatibility = "18"
+        targetCompatibility = "18"
     }
 }
 

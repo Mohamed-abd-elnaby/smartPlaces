@@ -4,34 +4,21 @@ plugins {
     id("kotlin-kapt")
     id 'maven-publish'
 }
-group = 'com.github.Mohamed-abd-elnaby'
+group = 'smartplaces'
 
 repositories {
     mavenCentral()
     google()
-    mavenCentral()
     maven { url "https://jitpack.io" }
 }
-tasks.register('androidSourcesJar', Jar) {
-   // classifier 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-project.afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                artifact androidSourcesJar // optional sources
-            }
-        }
-    }
-}
-
+//tasks.register('androidSourcesJar', Jar) {
+//    classifier 'sources'
+//    from android.sourceSets.main.java.srcDirs
+//}
 android {
     compileSdk 34
     defaultConfig {
-        minSdk 26
+        minSdk 2
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -46,12 +33,23 @@ android {
         viewBinding true
     }
     namespace 'com.smartplaces'
+    kotlinOptions {
+        jvmTarget = '18'
+    }
     compileOptions {
-        sourceCompatibility "20"
-        targetCompatibility "20"
+        sourceCompatibility = "18"
+        targetCompatibility = "18"
     }
 }
-
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+            }
+        }
+    }
+}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10'
