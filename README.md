@@ -33,7 +33,20 @@ Setup
 
 Using
       
-	  SmartPlacesInitialize.startSmartPlaces(Require Context,findNearbyPlaces: Boolean) {
-                        //using result here
-                    }
+	  SmartPlacesInitialize.fun start(
+            activity: Activity,
+            findNearbyPlaces: Boolean = false,
+            mustChoseLocation: Boolean = false,
+            maxZoomLevel: Float = 16F,
+            minZoomLevel: Float = 9F,
+            autoLocationZoomLevel: Float = 15F,
+            useProgressView: Boolean = true,
+            successCallback: (Result?) -> Unit,
+            errorCallback: ((String) -> Unit)? = null
+        )
       //using findNearbyPlaces with true you will using google places APi with fees and must be enable
+      //using mustChoseLocation with true will prevent user to close page without chose location
+      //using maxZoomLevel,minZoomLevel,autoLocationZoomLevel to control map behaviour
+      //using useProgressView with false to stop using progress dailog
+      //using successCallback recieve result
+      //using errorCallback recieve error message

@@ -1,5 +1,6 @@
 package com.smartplaces.features.home
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.Keep
@@ -15,6 +16,16 @@ import com.smartplaces.enitities.Result
 internal class AddressAdapter(var callBack: (Result) -> Unit) :
     RecyclerView.Adapter<AddressAdapter.ViewHolder>() {
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun addAll(mResults: List<Result>) {
+        results=mResults
+        notifyDataSetChanged()
+    }
+    @SuppressLint("NotifyDataSetChanged") fun clearAll(){
+        results= listOf()
+        notifyDataSetChanged()
+    }
+
     class ViewHolder(var view: SmartplacesAddressItemBinding, var callBack: (Result) -> Unit) :
         RecyclerView.ViewHolder(view.root) {
         fun display(result: Result) {
@@ -28,7 +39,7 @@ internal class AddressAdapter(var callBack: (Result) -> Unit) :
 
     }
 
-    var results: MutableList<Result> = mutableListOf()
+    private var results: List<Result> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(SmartplacesAddressItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)) {
             callBack(it)

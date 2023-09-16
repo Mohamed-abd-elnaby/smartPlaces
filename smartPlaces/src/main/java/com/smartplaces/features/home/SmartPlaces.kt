@@ -35,7 +35,6 @@ import com.smartplaces.enitities.Geometry
 import com.smartplaces.enitities.Location
 import com.smartplaces.enitities.Result
 import com.smartplaces.viewmodel.PlacesViewModel
-import java.lang.Error
 import java.util.*
 
 
@@ -57,14 +56,33 @@ import java.util.*
         var errorCallback: ((String) -> Unit)? = null
         var findNearbyPlaces: Boolean = false
         var mustChoseLocation: Boolean = false
+        var useProgressView: Boolean = true
+        var maxZoomLevel: Float = 16F
+        var minZoomLevel: Float = 9F
+        var autoLocationZoomLevel: Float = 15F
+
 
         @SuppressLint("StaticFieldLeak") lateinit var activity: Activity
-        fun start(activity: Activity, findNearbyPlaces: Boolean = false, mustChoseLocation: Boolean = false, successCallback: (Result?) -> Unit, errorCallback: ((String) -> Unit)? = null) {
-            this.callback = callback
+        fun start(
+            activity: Activity,
+            findNearbyPlaces: Boolean = false,
+            mustChoseLocation: Boolean = false,
+            maxZoomLevel: Float = 16F,
+            minZoomLevel: Float = 9F,
+            autoLocationZoomLevel: Float = 15F,
+            useProgressView: Boolean = true,
+            successCallback: (Result?) -> Unit,
+            errorCallback: ((String) -> Unit)? = null
+        ) {
+            this.callback = successCallback
             this.errorCallback = errorCallback
             this.activity = activity
             this.findNearbyPlaces = findNearbyPlaces
             this.mustChoseLocation = mustChoseLocation
+            this.maxZoomLevel = maxZoomLevel
+            this.minZoomLevel = minZoomLevel
+            this.autoLocationZoomLevel = autoLocationZoomLevel
+            this.useProgressView = useProgressView
             activity.startActivity(Intent(activity, SmartPlaces::class.java))
         }
     }
@@ -115,8 +133,6 @@ import java.util.*
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Utility.PermissionCodeLocation && grantResults[0] == PackageManager.PERMISSION_GRANTED) if (checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION) && checkAndRequestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
             mapFragment?.getMapAsync(this)
-
-
         } else {
             Log.e("Smart Places", "need location permission")
         }
@@ -127,10 +143,9 @@ import java.util.*
     }
 
 
-    @SuppressLint("NotifyDataSetChanged") override fun initialComponent() {
+    override fun initialComponent() {
         if (findNearbyPlaces) {
-            adapter.results.clear()
-            adapter.notifyDataSetChanged()
+            adapter.clearAll()
             bind.rvAddress.adapter = adapter
             bind.rvAddress.visibility = View.VISIBLE
         }
@@ -139,6 +154,7 @@ import java.util.*
         placesViewModel = ViewModelProvider(this)[PlacesViewModel::class.java]
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         if (checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION) && checkAndRequestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            showLoading()
             mapFragment?.getMapAsync(this)
         } else {
             Log.e("Smart Places", "need location permission")
@@ -159,7 +175,7 @@ import java.util.*
                 }
                 finish()
             } else {
-                Toast.makeText(this,getString(R.string.noLocationSelectMessage),Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.noLocationSelectMessage), Toast.LENGTH_SHORT).show()
                 Log.e("Smart Places ", "Location Not Chosen")
                 errorCallback?.let { it("Location Not Chosen") }
                 if (!mustChoseLocation) finish()
@@ -174,70 +190,76 @@ import java.util.*
         return bind.root
     }
 
-    override fun getState(): LiveData<*> {
-        return placesViewModel._states
+    override fun getProgress(): View {
+        return bind.progress
     }
 
-    @SuppressLint("NotifyDataSetChanged") override fun invoke(p1: Any) {
+    override fun getState(): LiveData<*> {
+        return placesViewModel.mStates
+    }
+
+    override fun invoke(p1: Any) {
         when (p1) {
             is PlacesStates.PlacesResponseSuccess -> {
                 p1.data?.results.takeIf { !it.isNullOrEmpty() }?.let { list ->
-                    myLocation = list[0]
-                    adapter.results = list.toMutableList()
-                    adapter.notifyDataSetChanged()
+                    adapter.addAll(list)
                 }
             }
         }
 
     }
 
-    @SuppressLint("NotifyDataSetChanged") override fun onMapReady(p0: GoogleMap?) {
-        googleMap = p0
-        googleMap?.isMyLocationEnabled = true
-        googleMap?.setMaxZoomPreference(14F)
-        fusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
-            location?.apply {
-                googleMap?.moveCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        LatLng(
-                            this.latitude, this.longitude
-                        ), 14F
+    override fun onMapReady(p0: GoogleMap?) {
+        if (checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION) || checkAndRequestPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            googleMap = p0
+            googleMap?.isMyLocationEnabled = true
+            googleMap?.setMaxZoomPreference(maxZoomLevel)
+            googleMap?.setMinZoomPreference(minZoomLevel)
+            fusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
+                location?.apply {
+                    googleMap?.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            LatLng(
+                                this.latitude, this.longitude
+                            ), autoLocationZoomLevel
+                        )
                     )
-                )
-            }
-
-
-        }
-        fusedLocationClient?.lastLocation?.addOnFailureListener {
-            finish()
-        }
-        googleMap?.setOnMapClickListener { LatLng ->
-            showLoading()
-            if (myMarker != null) myMarker?.position = LatLng
-            else googleMap?.addMarker(
-                MarkerOptions().position(
-                    LatLng(
-                        LatLng.latitude, LatLng.longitude
-                    )
-                )
-            )
-
-
-            if (findNearbyPlaces) LatLng?.apply {
-                adapter.results.clear()
-                adapter.notifyDataSetChanged()
-                placesViewModel.getPlaces(getString(R.string.google_maps_key), this.latitude.toString(), this.longitude.toString())
-            }
-            else {
-                myLocation = Result(Geometry(Location(LatLng.latitude, LatLng.longitude)))
-                getAddress(LatLng.latitude, LatLng.longitude) {
-                    myLocation?.name = it
                 }
+                hideLoading()
             }
-            hideLoading()
-        }
+            fusedLocationClient?.lastLocation?.addOnFailureListener {
+                hideLoading()
+                finish()
+            }
+            googleMap?.setOnMapClickListener { latLng ->
+                showLoading()
+                if (myMarker != null)
+                    myMarker?.position = latLng
+                else
+                    myMarker = googleMap?.addMarker(
+                        MarkerOptions().position(
+                            LatLng(
+                                latLng.latitude, latLng.longitude
+                            )
+                        )
+                    )
 
+
+                if (findNearbyPlaces) latLng?.apply {
+                    adapter.clearAll()
+                    placesViewModel.getPlaces(getString(R.string.google_maps_key), this.latitude.toString(), this.longitude.toString())
+                }
+                else {
+                    myLocation = Result(Geometry(Location(latLng.latitude, latLng.longitude)))
+                    getAddress(latLng.latitude, latLng.longitude) {
+                        myLocation?.name = it
+                    }
+                }
+                hideLoading()
+            }
+        }
     }
+
 
     private fun getAddress(lat: Double, lng: Double, callback: (String?) -> Unit) {
         val geocoder = Geocoder(this, Locale.getDefault())

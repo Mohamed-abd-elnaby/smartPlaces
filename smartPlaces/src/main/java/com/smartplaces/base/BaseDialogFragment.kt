@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import com.smartplaces.base.helper.handleApiError
 import com.smartplaces.base.helper.showInternetMessageError
+import com.smartplaces.features.home.SmartPlaces
 
 
 abstract class BaseActivity : AppCompatActivity(), (Any) -> Unit {
@@ -32,20 +33,13 @@ abstract class BaseActivity : AppCompatActivity(), (Any) -> Unit {
 
     }
 
-    fun showLoading() {
-        progressBar.show()
-    }
-
-    fun hideLoading() {
-        progressBar.hide()
-    }
 
     private fun cancelLoading() {
         progressBar.dismiss()
         progressBar.cancel()
     }
 
-    fun setCanClickable(canClickable: Boolean) {
+    private fun setCanClickable(canClickable: Boolean) {
         progressBar.setCancelable(canClickable)
     }
 
@@ -62,9 +56,19 @@ abstract class BaseActivity : AppCompatActivity(), (Any) -> Unit {
 
     }
 
+    fun showLoading() {
+        if (SmartPlaces.useProgressView)
+            getProgress().visibility = View.VISIBLE
+    }
+
+    fun hideLoading() {
+        getProgress().visibility = View.GONE
+    }
+
     internal abstract fun initialComponent()
     internal abstract fun clicks()
     internal abstract fun getInflateView(): View
+    internal abstract fun getProgress(): View
     internal abstract fun getState(): LiveData<*>?
     private fun handleResponse(response: CommonStates<*>, result: (Any?) -> Unit) {
         when (response) {
@@ -72,18 +76,22 @@ abstract class BaseActivity : AppCompatActivity(), (Any) -> Unit {
                 showLoading()
                 setCanClickable(false)
             }
+
             is CommonStates.NoInternet -> {
                 hideLoading()
                 showInternetMessageError()
             }
+
             is CommonStates.Error -> {
                 hideLoading()
                 handleApiError(response.code, response.exp)
             }
+
             is CommonStates.Success -> {
                 hideLoading()
                 result(response.data)
             }
+
             is CommonStates.EmptyState -> {
                 hideLoading()
                 showEmptyView()

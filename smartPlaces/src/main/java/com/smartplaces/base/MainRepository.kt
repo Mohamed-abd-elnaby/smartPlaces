@@ -1,7 +1,6 @@
 package com.smartplaces.base
 
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.smartplaces.base.helper.isInternetConnected
 import kotlinx.coroutines.CoroutineScope
@@ -13,18 +12,18 @@ import kotlinx.coroutines.launch
  */
 
 
-internal abstract class MainRepository : ViewModel() {
+internal abstract  class  MainRepository <T> : ViewModel() {
 
 
-    fun fetchData(states: Any, showProgress: Boolean, worker: suspend (() -> Unit)) =
+    fun fetchData(states: SingleLiveEvent<CommonStates<T>>, showProgress: Boolean, worker: suspend (() -> Unit)) =
         CoroutineScope(Dispatchers.Main).launch {
             if (isInternetConnected()) {
                 if (showProgress)
-                    (states as MutableLiveData<*>).value = CommonStates.LoadingShow
+                    states.value = CommonStates.LoadingShow
                 worker()
 
             } else {
-                (states as MutableLiveData<*>).value = CommonStates.NoInternet
+                states.value = CommonStates.NoInternet
             }
         }
 

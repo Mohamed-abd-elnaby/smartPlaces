@@ -11,14 +11,14 @@ import com.smartplaces.repository.RepositoryClient
 // Created by Fahmy on 2/17/20.
 //
 
-internal class PlacesViewModel() : MainRepository() {
+internal class PlacesViewModel : MainRepository<PlacesStates>() {
 
 
     private var states = SingleLiveEvent<CommonStates<PlacesStates>>()
-    var _states: LiveData<CommonStates<PlacesStates>> = states
-    fun getPlaces(apiKey: String, loc_lat: String, loc_long: String) {
+    var mStates: LiveData<CommonStates<PlacesStates>> = states
+    fun getPlaces(apiKey: String, locationLat: String, locationLong: String) {
         fetchData(states, true) {
-            val response = RepositoryClient.repositoryClient.fetchPlaces(apiKey, "$loc_lat,$loc_long")
+            val response = RepositoryClient.repositoryClient.fetchPlaces(apiKey, "$locationLat,$locationLong")
             if (response.isSuccessful)
                 if (!response.body()?.results.isNullOrEmpty())
                     states.value =

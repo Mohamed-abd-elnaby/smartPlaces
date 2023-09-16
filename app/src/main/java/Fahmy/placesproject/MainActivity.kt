@@ -12,7 +12,7 @@ internal class MainActivity : AppCompatActivity() {
         bind = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bind.root)
         bind.button.setOnClickListener {
-            SmartPlaces.start(this, findNearbyPlaces = false, mustChoseLocation = true, successCallback = {
+            SmartPlaces.start(this, findNearbyPlaces = true, mustChoseLocation = true, maxZoomLevel = 19F, successCallback = {
                 println("result from $it")
             })
         }
